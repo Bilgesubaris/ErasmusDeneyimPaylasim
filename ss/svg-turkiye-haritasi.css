@@ -1,6 +1,8 @@
 .svg-turkiye-haritasi {
     max-width: 1140px;
     margin: 0 auto;
+    padding-top: 50px;
+
     text-align: center;
   }
   .svg-turkiye-haritasi svg {
@@ -49,5 +51,46 @@
   #bolge-7 g path{
     fill:#aade87
   }
-  
-  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+  /* Navbar Butonları */
+.btn-login, .btn-signup {
+  background: none;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::after, .btn-signup::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #007bff;
+  transition: transform 0.3s ease-in-out;
+  transform: scaleX(0);
+  transform-origin: left;
+  z-index: -1;
+}
+
+.btn-login:hover::after, .btn-signup:hover::after {
+  transform: scaleX(1);
+}
+
+.btn-login:hover, .btn-signup:hover {
+  color: white;
+  border-color: #007bff;
+}
