@@ -317,32 +317,28 @@
           </div>
       </div>
   </div>
-
-  <!-- Erasmus Testi -->
   <div class="container test-container">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
-          alt="Avrupa Haritası">
-      
-      <div class="text-content">
-          <h4>Hangi Erasmus Ülkesini Seçmelisin?</h4>
-          <button class="start-button" onclick="openModal()">Teste Başla</button>
-
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
+        alt="Avrupa Haritası">
+        <h4>Hangi Erasmus Ülkesini Seçmelisin?</h4>
+        <button class="start-button" onclick="openModal()">Teste Başla</button>
     </div>
+</div>
 
-    <!-- 🟢 Modal Kutusu -->
-    <div id="testModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="question-text">Sorular buraya gelecek</h2>
-            <div id="answer-buttons" class="answer-buttons">
-                <!-- Cevaplar buraya eklenecek -->
-            </div>
-            <button id="next-button" class="next-button" onclick="nextQuestion()">Sonraki Soru</button>
+<!-- 🟢 Modal Kutusu -->
+<div id="testModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h5 id="question-text">Sorular buraya gelecek</h5>
+        <div id="answer-buttons" class="answer-buttons">
+            <!-- Cevaplar buraya eklenecek -->
         </div>
+        <button id="next-button" class="next-button" onclick="nextQuestion()">Sonraki Soru</button>
     </div>
+</div>
+</div>
+<script src = "test.js"></script>
 
-    <script src="test.js"></script>
-    
 <!-- SVG Türkiye Haritası -->
   <script src="svg-turkiye-haritasi.js"></script>
   <script>

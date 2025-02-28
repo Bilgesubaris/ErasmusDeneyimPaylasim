@@ -103,8 +103,6 @@ button:hover {
   border-radius: 30px; /* Hover'da daha da yuvarlat */
 }
 
-
-
 .container {
   width: 80%;
   margin: auto;
@@ -140,116 +138,75 @@ h2 {
 .card h3 {
   color: #0077cc;
 }
-h4 {
-  margin-top: 1px;
-  color: #333;
+
+/* Modalın başlangıçta gizli olması */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.test-container {
-  text-align: center;
-  margin-top: 60px; /* Üst boşluk */
-}
-
-.test-button {
-  background-color: transparent;
-  color: #ffa500;
-  border: 2px solid #ffa500;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  margin-top: 10px; /* Butonun üstüne boşluk ekler */
-}
-
-.test-button:hover {
-  background-color: #ffa500;
-  color: white;
-  border: 2px solid #ffa500;
-}
-h4 {
-  margin-bottom: 10px; /* Başlığın altına boşluk bırakır */
-  font-size: 24px; /* Yazıyı büyüt */
-
-}
-.test-button {
-  margin-top: 15px; /* Butonun üstüne boşluk bırakır */
-}
-/* Container ayarları */
-.container {
-    display: flex; /* Yan yana hizalama */
-    align-items: center; /* Dikey hizalama */
-    gap: 20px; /* Resim ve metin arasına boşluk */
-}
-
-/* Resim ayarları */
-img {
-    width: 300px; /* Resmin genişliği */
-    height: auto; /* Oranı koruması için */
-}
-
-/* Metin kısmı */
-.text-content {
-    max-width: 400px; /* Metin kısmının genişliği */
-}
-
-/* Buton tasarımı */
-.test-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-/* Hover efekti */
-.test-button:hover {
-    background-color: #0056b3;
-}
-/* Genel Container */
-.container {
+/* Modal içeriği */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
   width: 80%;
-  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+  border-radius: 15px; /* Köşeleri yumuşat */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti ekle */
 }
 
-/* Erasmus Testi */
-.test1-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
+/* Kapatma butonu */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
-img {
-  width: 500px;
-  height: auto;
-  padding-top: 80px;
-
-}
-
-.text-content {
-  max-width: 500px;
-}
-
-.test1-button {
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
-  padding: 15px 30px;
-  border: 3px solid #ffcc00; 
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
   cursor: pointer;
-  font-size: 16px;
-  font-size: 20px; /* Buton yazısını büyüt */
-    
+}
+#question-text {
+  font-size: 24px; /* Soruların boyutunu artırır */
+  font-weight: bold; /* Soruları kalın yapar */
+  margin-bottom: 20px; /* Soru ile cevaplar arasına boşluk ekler */
+}
+/* Cevap butonlarını dikey olarak hizalama */
+#answer-buttons {
+  display: flex;
+  flex-direction: column; /* Butonları dikey olarak hizalar */
+  gap: 10px; /* Butonlar arasına boşluk ekler */
 }
 
-.test1-button:hover {
-  background-color: #e9991a;
+/* Cevap butonlarının boyutunu artırma */
+.answer-button {
+  font-size: 18px; /* Cevap butonlarının boyutunu artırır */
+  padding: 15px 30px; /* Butonların iç boşluğunu artırır */
+  width: 100%; /* Butonların genişliğini tam yapar */
+  max-width: 400px; /* Maksimum genişlik */
+  margin: 0 auto; /* Butonları ortalar */
+  border: 2px solid rgb(38, 158, 195); /* Çerçeve rengi */
+  border-radius: 10px; /* Butonların köşelerini yuvarlatır */
+  background-color: white; /* Buton arka plan rengi */
+  color: black; /* Buton yazı rengi */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Yumuşak geçiş */
 }
-.text-content h4 {
-  font-size: 28px; /* Yazıyı büyüt */
-  font-weight: bold; /* Kalın yap */
-  color: #333; /* Daha koyu renk */
+
+.answer-button:hover {
+  background-color: rgb(38, 158, 195); /* Hover durumunda arka plan rengi */
+  color: white; /* Hover durumunda yazı rengi */
 }
