@@ -1,57 +1,4 @@
-.svg-turkiye-haritasi {
-    max-width: 1140px;
-    margin: 0 auto;
-    padding-top: 50px;
-
-    text-align: center;
-  }
-  .svg-turkiye-haritasi svg {
-    width: 100%;
-    height: auto;
-  }
-  .il-isimleri {
-    position: absolute;
-    z-index: 2;
-  }
-  .il-isimleri div {
-    font-family: 'Open Sans';
-    display: inline-block;
-    background: #222;
-    color: #fff;
-    padding: 8px 16px;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-  }
-  
-  #svg-turkiye-haritasi path {
-    cursor: pointer;
-  }
-  #svg-turkiye-haritasi path:hover {
-    fill: #666;
-  }
-  #bolge-1 g path{
-    fill:#87cdde
-  }
-  #bolge-2 g path{
-    fill:#ac93a7
-  }
-  #bolge-3 g path{
-    fill:#ffb380
-  }
-  #bolge-4 g path{
-    fill:#cccccc
-  }
-  #bolge-5 g path{
-    fill:#decd87
-  }
-  #bolge-6 g path{
-    fill:#de8787
-  }
-  #bolge-7 g path{
-    fill:#aade87
-  }
-  .navbar {
+ .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -105,8 +52,10 @@ button:hover {
 
 .container {
   width: 80%;
-  margin: auto;
   text-align: center;
+}
+.test-container {
+  margin-top: 50px; /* Yukarıdan uzaklaştırır, istersen artırabilirsin */
 }
 
 h2 {
@@ -114,21 +63,26 @@ h2 {
   color: #333;
 }
 
+.container.experiences-container {
+  margin: 50px auto 0 auto; /* Üstten 50px boşluk, sağ-sol otomatik */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .experiences {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 10px;
+  gap: 20px; /* Kartlar arası boşluk */
 }
 
 .card {
-  background: white;
-  padding: 30px;
-  width: 300px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  background-color: #fffefe;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgb(34, 2, 2);
+  text-align: center;
+  width: 400px; 
 }
 
 .card:hover {
@@ -137,6 +91,54 @@ h2 {
 
 .card h3 {
   color: #0077cc;
+}
+h4 {
+  font-size: 30px;
+  margin: 0;
+}
+
+.test-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.test-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.test-wrapper img {
+  width: 300px;
+  height: auto;
+}
+
+.text-and-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ortalar */
+  gap: 10px;
+  text-align: center; /* Yazıyı da ortalar */
+  margin-top: 180px; 
+  margin-left: 30px
+}
+
+.start-button {
+  padding: 6px 20px;
+  font-size: 14px;
+  line-height: 1;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 36px;
+}
+
+.start-button:hover {
+  background-color: #45a049;
 }
 
 /* Modalın başlangıçta gizli olması */
@@ -209,4 +211,147 @@ h2 {
 .answer-button:hover {
   background-color: rgb(38, 158, 195); /* Hover durumunda arka plan rengi */
   color: white; /* Hover durumunda yazı rengi */
+}
+.fun-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d51aaf;
+  margin-top: 20px;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background-color: white; /* Arka planı beyaz yapıyoruz */
+  height: 500vh; /* Ekran yüksekliği kadar */
+  overflow: auto; /* Scrollbar'ı aktif hale getirmek için */
+}
+
+.countdown-container {
+  text-align: center;
+  padding: 20px;
+  margin-top: 70px;
+  background-color: #f5f5f5; /* Gri arka plan */
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+  width: 80%;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.countdown-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333; /* Başlık rengi koyu gri */
+}
+
+.countdown {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333; /* Normal sayaç rengi siyah */
+  letter-spacing: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.countdown span {
+  padding: 10px;
+  background-color: #938989; /* Gri arka planlı sayaç */
+  color: #0b0707; /* Sayaç yazı rengi koyu */
+  border-radius: 5px;
+  font-size: 28px;
+}
+
+#countdown-container .ended {
+  color: #b21b0b; /* "Başvurular Bitti" yazısı kırmızı olacak */
+}
+
+/* Başlangıç metni */
+.intro-text {
+  text-align: center;
+  margin-bottom: 40px;
+  background-color: #f5f5f5;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.intro-text h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.intro-text p {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+.country-title {
+  margin-top: 50px;
+  color: red;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+.country-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.country-card {
+  width: 250px; /* Sabit genişlik */
+  height: 450px; /* Sabit yükseklik */
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-header {
+  position: relative;
+  height: 180px; /* Sabit resim yüksekliği */
+  overflow: hidden;
+}
+
+.country-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Resimlerin kırpılmasını engeller */
+}
+
+.card-header h3 {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 5px 0;
+  font-size: 18px;
+}
+
+.card-body {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-body ul {
+  list-style: none;
+  padding: 0;
+}
+
+.card-body ul li {
+  margin-bottom: 5px;
 }

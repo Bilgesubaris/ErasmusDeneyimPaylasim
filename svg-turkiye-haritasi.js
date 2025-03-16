@@ -1,51 +1,27 @@
-function svgturkiyeharitasi() {
-  const element = document.querySelector('#svg-turkiye-haritasi');
-  const info = document.querySelector('.il-isimleri');
+// Hedef tarih: 16 Mart 16:59
+var targetDate = new Date("March 16, 2025 16:59:59").getTime();
 
-  element.addEventListener(
-    'mouseover',
-    function (event) {
-      if (event.target.tagName === 'path') {
-        info.innerHTML = [
-          '<div>',
-          event.target.parentNode.getAttribute('data-iladi'),
-          '</div>'
-        ].join('');
-      }
+var countdownElement = document.getElementById("countdown");
+var countdownContainer = document.getElementById("countdown-container");
+
+// Güncellemeyi her saniye yapacak şekilde ayarlandı
+var countdownInterval = setInterval(function() {
+
+    var now = new Date().getTime();
+    var timeLeft = targetDate - now;
+
+    // Eğer zaman bitmişse
+    if (timeLeft <= 0) {
+        clearInterval(countdownInterval);
+        countdownElement.innerHTML = "Başvurular Bitti!";
+        countdownContainer.classList.add("ended");  // "Başvurular Bitti" yazısı kırmızı olacak
+    } else {
+        // Güncelleme için gün, saat, dakika, saniye hesaplaması
+        var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdownElement.innerHTML = days + "g " + hours + "s " + minutes + "d " + seconds + "s ";
     }
-  );
-
-  element.addEventListener(
-    'mousemove',
-    function (event) {
-      info.style.top = event.pageY + 25 + 'px';
-      info.style.left = event.pageX + 'px';
-    }
-  );
-
-  element.addEventListener(
-    'mouseout',
-    function (event) {
-      info.innerHTML = '';
-    }
-  );
-
-  element.addEventListener(
-    'click',
-    function (event) {
-      if (event.target.tagName === 'path') {
-        const parent = event.target.parentNode;
-        const id = parent.getAttribute('id');
-
-        window.location.href = (
-          '#'
-          + id
-          + '-'
-          + parent.getAttribute('data-plakakodu')
-        );
-      }
-    }
-  );
-}
-
-svgturkiyeharitasi();
+}, 1000);
