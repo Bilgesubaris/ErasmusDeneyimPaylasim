@@ -1,6 +1,6 @@
 # Erasmus Deneyim 
 
-Bu proje, Erasmus başvurusu yapmak isteyen öğrencilere rehberlik eden bir web platformudur. Platformda geri sayım sayacı, ülke tanıtımları, deneyim yorumları ve küçük bir quiz gibi çeşitli bölümler bulunmaktadır.Proje geliştirilmeye devam edilmektedir.
+Bu proje, Erasmus başvurusu yapmak isteyen öğrencilere rehberlik eden bir web ve mobil platformudur. Platformda geri sayım sayacı, ülke tanıtımları, deneyim yorumları ve küçük bir quiz gibi çeşitli bölümler bulunmaktadır.Proje geliştirilmeye devam edilmektedir.
 
 ## 📌 Özellikler
 
