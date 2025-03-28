@@ -10,7 +10,10 @@
     <div class="auth-container">
         <div class="auth-box">
             <h2 class="text-center mb-4">Login</h2>
-            <form onsubmit="return handleLogin(event)">
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                Hatalı email veya şifre!
+            </div>
+            <form id="login-form">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" required>
@@ -34,6 +37,6 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="ogrencigiris.js"></script>
+    <script src="js/ogrencigiris.js"></script>
 </body>
-</html> 
+</html>

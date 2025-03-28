@@ -1,5 +1,5 @@
 // Hedef tarih: 16 Mart 16:59
-var targetDate = new Date("March 16, 2025 16:59:59").getTime();
+var targetDate = new Date("March 26, 2025 18:11:09").getTime();
 
 var countdownElement = document.getElementById("countdown");
 var countdownContainer = document.getElementById("countdown-container");

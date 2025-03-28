@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Panel - Erasmus Deneyimleri</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-panel">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-user-shield me-2"></i>
+                Admin Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#experiences">
+                            <i class="fas fa-globe me-1"></i>Deneyimler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#users">
+                            <i class="fas fa-users me-1"></i>Kullanıcılar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reports">
+                            <i class="fas fa-flag me-1"></i>Raporlar
+                        </a>
+                    </li>
+                </ul>
+                <a href="svg-turkiye-haritasi.html">
+                    <button class="btn btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-1"></i>Çıkış
+                    </button>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon bg-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3 class="stats-number" id="totalUsers">0</h3>
+                        <p class="stats-label">Toplam Kullanıcı</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon bg-success">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3 class="stats-number" id="totalExperiences">0</h3>
+                        <p class="stats-label">Toplam Deneyim</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon bg-warning">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3 class="stats-number" id="totalUniversities">0</h3>
+                        <p class="stats-label">Üniversite</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon bg-danger">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h3 class="stats-number" id="totalReports">0</h3>
+                        <p class="stats-label">Bekleyen Rapor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Son Eklenen Deneyimler</h5>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-sync-alt me-1"></i>Yenile
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="recentExperiencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı</th>
+                                    <th>Üniversite</th>
+                                    <th>Ülke</th>
+                                    <th>Tarih</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JavaScript ile doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Son Aktiviteler</h5>
+                    </div>
+                    <div class="activity-list" id="recentActivities">
+                        <!-- JavaScript ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="users" class="section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Kayıtlı Öğrenciler</h4>
+            <div class="d-flex gap-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="userSearch" placeholder="Öğrenci ara...">
+                    <button class="btn btn-outline-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <select class="form-select" id="filterUniversity">
+                    <option value="all">Tüm Üniversiteler</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="table-responsive">
+                <table class="table table-hover" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Öğrenci</th>
+                            <th>E-posta</th>
+                            <th>Üniversite</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>Deneyim Sayısı</th>
+                            <th>Son Giriş</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Will be filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div class="pagination-info">
+                    <span id="userCount">0 öğrenci</span>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Önceki</a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="#">1</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience Details Modal -->
+    <div class="modal" id="experienceModal" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg" style="margin-top: 50px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="experienceModalLabel">Deneyim Detayları</h5>
+                    <button type="button" class="btn-close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="user-info text-center">
+                                <img id="modalUserImage" src="" alt="User" class="rounded-circle mb-2" width="96" height="96">
+                                <h6 id="modalUserName" class="mb-1"></h6>
+                                <p id="modalUserEmail" class="text-muted small"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="experience-details">
+                                <div class="mb-3">
+                                    <label class="fw-bold">Üniversite:</label>
+                                    <p id="modalUniversity"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="fw-bold">Ülke:</label>
+                                    <p id="modalCountry"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="fw-bold">Dönem:</label>
+                                    <p id="modalSemester"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="fw-bold">Tarih:</label>
+                                    <p id="modalDate"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="experience-content mt-3">
+                        <h6 class="fw-bold mb-3">Deneyim</h6>
+                        <p id="modalContent" class="text-justify"></p>
+                    </div>
+                    <div class="experience-photos mt-3" id="modalPhotos">
+                        <!-- Photos will be added dynamically -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-success" id="modalApproveBtn">
+                        <i class="fas fa-check me-1"></i>Onayla
+                    </button>
+                    <button type="button" class="btn btn-danger" id="modalDeleteBtn">
+                        <i class="fas fa-trash me-1"></i>Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function closeModal() {
+            const modal = document.getElementById('experienceModal');
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            document.querySelector('.modal-backdrop')?.remove();
+        }
+    </script>
+    <script src="js/admin-panel.js"></script>
+</body>
+</html>
