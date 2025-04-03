@@ -13,7 +13,7 @@ Bu proje, Erasmus başvurusu yapmak isteyen öğrencilere rehberlik eden bir web
 
 - **Frontend:** HTML, CSS, JavaScript
 - **Stil Kütüphaneleri:** Bootstrap 
-
+- **Backend:** Node.js
 ## 🚀 Kurulum
 
 1. Projeyi klonlayın:
