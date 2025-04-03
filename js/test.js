@@ -66,7 +66,7 @@ const questions = [
     answers: [
         { text: "Kültürel açıdan zengin ve tarihi bir şehir. 🏛️🖼️", score: "A" },
         { text: "Bol bol parti ve eğlence olmalı. 🎉🍹", score: "B" },
-        { text: "Akademik ve araştırma odaklı olmalı. 📖🔬", score: "C" },
+        { text: "Akademik ve araştırmaya odaklı olmalı. 📖🔬", score: "C" },
         { text: "Sessiz, sakin ve öğrenci dostu olmalı. 🌱🏡", score: "D" }
     ]
   },
@@ -92,13 +92,19 @@ const questions = [
   
   // Modal açma fonksiyonu
   function openModal() {
-    modal.style.display = "block";
+    modal.style.display = "flex";
+    setTimeout(() => {
+        modal.classList.add("show");
+    }, 10);
     startTest();
   }
   
   // Modal kapama fonksiyonu
   function closeModal() {
-    modal.style.display = "none";
+    modal.classList.remove("show");
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 300);
   }
   
   // Testi başlatma
@@ -106,7 +112,14 @@ const questions = [
     currentQuestionIndex = 0;
     answersSelected = [];
     nextButton.style.display = "none";
+    updateProgress();
     showQuestion();
+  }
+  
+  // İlerleme durumunu güncelleme
+  function updateProgress() {
+    const progressElement = document.querySelector(".test-progress");
+    progressElement.textContent = `Soru ${currentQuestionIndex + 1} / ${questions.length}`;
   }
   
   // Soruyu ve cevapları ekrana getirme
@@ -114,15 +127,16 @@ const questions = [
     resetState();
     let currentQuestion = questions[currentQuestionIndex];
     questionText.innerText = currentQuestion.question;
-  
+    updateProgress();
+
     currentQuestion.answers.forEach(answer => {
         const button = document.createElement("button");
         button.innerText = answer.text;
         button.classList.add("answer-button");
-        button.addEventListener("click", () => selectAnswer(answer.score));
+        button.addEventListener("click", () => selectAnswer(button, answer.score));
         answerButtons.appendChild(button);
     });
-  
+
     nextButton.style.display = "none";
   }
   
@@ -132,9 +146,25 @@ const questions = [
   }
   
   // Kullanıcı cevap seçtiğinde çağrılan fonksiyon
-  function selectAnswer(score) {
-    answersSelected.push(score);
-    nextButton.style.display = "block"; // "Sonraki Soru" butonu görünür
+  function selectAnswer(selectedButton, score) {
+    // Önceki seçili butonun seçimini kaldır
+    const buttons = answerButtons.getElementsByClassName("answer-button");
+    Array.from(buttons).forEach(button => {
+        button.classList.remove("selected");
+    });
+
+    // Yeni seçilen butonu işaretle
+    selectedButton.classList.add("selected");
+    
+    // Eğer bu soru daha önce cevaplanmamışsa, cevabı kaydet
+    if (answersSelected.length <= currentQuestionIndex) {
+        answersSelected.push(score);
+    } else {
+        // Eğer soru daha önce cevaplanmışsa, cevabı güncelle
+        answersSelected[currentQuestionIndex] = score;
+    }
+    
+    nextButton.style.display = "block";
   }
   
   // Sonraki soruya geçiş
@@ -176,4 +206,3 @@ const questions = [
   
     return "Senin için en iyi Erasmus ülkesi birçok yerde olabilir! 🌍";
   }
-  

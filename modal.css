@@ -28,6 +28,8 @@
     transform: scale(0.7);
     opacity: 0;
     transition: all 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal.show .modal-content {
@@ -61,6 +63,9 @@
     color: #666;
     margin: 1rem 0;
     font-size: 0.9rem;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 20px;
 }
 
 .answer-buttons {
@@ -86,14 +91,15 @@
 .answer-button:hover {
     background: #f8f9fa;
     transform: translateX(5px);
-    color: #3498db;
+    border-color: #3498db;
 }
 
 .answer-button.selected {
-    background: #3498db;
+    background: #2ecc71;
     color: white;
-    border-color: #3498db;
+    border-color: #27ae60;
     transform: translateX(5px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .answer-button:disabled {

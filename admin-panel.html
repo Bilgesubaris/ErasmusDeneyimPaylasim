@@ -26,7 +26,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#experiences">
+                        <a class="nav-link" href="deneyimler.html" target="_blank">
                             <i class="fas fa-globe me-1"></i>Deneyimler
                         </a>
                     </li>
@@ -202,6 +202,27 @@
         </div>
     </div>
 
+    <div id="experiences" class="section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-clock me-2"></i>Onay Bekleyen Deneyimler</h4>
+            <div class="btn-group">
+                <button class="btn btn-outline-primary active" data-status="pending">
+                    <i class="fas fa-clock me-2"></i>Bekleyen
+                </button>
+                <button class="btn btn-outline-primary" data-status="approved">
+                    <i class="fas fa-check me-2"></i>Onaylanan
+                </button>
+                <button class="btn btn-outline-primary" data-status="rejected">
+                    <i class="fas fa-times me-2"></i>Reddedilen
+                </button>
+            </div>
+        </div>
+
+        <div id="experiencesContainer">
+            <!-- Deneyimler buraya dinamik olarak eklenecek -->
+        </div>
+    </div>
+
     <!-- Experience Details Modal -->
     <div class="modal" id="experienceModal" tabindex="-1" style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg" style="margin-top: 50px;">
@@ -269,6 +290,173 @@
             document.body.classList.remove('modal-open');
             document.querySelector('.modal-backdrop')?.remove();
         }
+    </script>
+    <script>
+        // Deneyimleri yükleme fonksiyonu
+        function loadExperiences(status = 'pending') {
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            const filteredExperiences = experiences.filter(exp => exp.status === status);
+            const container = document.getElementById('experiencesContainer');
+            
+            if (filteredExperiences.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        ${status === 'pending' ? 'Onay bekleyen deneyim bulunmuyor' : 
+                          status === 'approved' ? 'Onaylanmış deneyim bulunmuyor' : 
+                          'Reddedilmiş deneyim bulunmuyor'}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredExperiences.map(exp => `
+                <div class="card mb-4" id="experience-${exp.id}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">${exp.title}</h5>
+                            <small class="text-muted">
+                                ${exp.userName} tarafından ${new Date(exp.date).toLocaleDateString('tr-TR')} tarihinde gönderildi
+                            </small>
+                        </div>
+                        <div class="btn-group">
+                            ${status === 'pending' ? `
+                                <button class="btn btn-success btn-sm" onclick="updateExperienceStatus('${exp.id}', 'approved')">
+                                    <i class="fas fa-check me-2"></i>Onayla
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="updateExperienceStatus('${exp.id}', 'rejected')">
+                                    <i class="fas fa-times me-2"></i>Reddet
+                                </button>
+                            ` : `
+                                <button class="btn btn-danger btn-sm" onclick="deleteExperience('${exp.id}')">
+                                    <i class="fas fa-trash me-2"></i>Sil
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-university me-2"></i>Üniversite:</strong> ${exp.university}</p>
+                                <p><strong><i class="fas fa-map-marker-alt me-2"></i>Konum:</strong> ${exp.city}, ${exp.country}</p>
+                                <p><strong><i class="fas fa-calendar me-2"></i>Dönem:</strong> ${exp.semester}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-star me-2"></i>Değerlendirme:</strong> 
+                                    ${'⭐'.repeat(parseInt(exp.rating))}
+                                </p>
+                                <p><strong><i class="fas fa-home me-2"></i>Konaklama:</strong> ${exp.accommodation}</p>
+                                <p><strong><i class="fas fa-euro-sign me-2"></i>Aylık Harcama:</strong> ${exp.monthlyExpense}€</p>
+                            </div>
+                        </div>
+                        <div class="experience-text mb-3">
+                            <h6><i class="fas fa-comment-alt me-2"></i>Deneyim</h6>
+                            <p>${exp.experience}</p>
+                        </div>
+                        ${exp.recommendations ? `
+                            <div class="recommendations mb-3">
+                                <h6><i class="fas fa-lightbulb me-2"></i>Tavsiyeler</h6>
+                                <p>${exp.recommendations}</p>
+                            </div>
+                        ` : ''}
+                        ${exp.photos && exp.photos.length > 0 ? `
+                            <div class="photos">
+                                <h6><i class="fas fa-images me-2"></i>Fotoğraflar</h6>
+                                <div class="row g-2">
+                                    ${exp.photos.map(photo => `
+                                        <div class="col-md-4">
+                                            <img src="${photo}" class="img-fluid rounded" alt="Deneyim fotoğrafı">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Deneyim durumunu güncelleme fonksiyonu
+        function updateExperienceStatus(id, status) {
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            const index = experiences.findIndex(exp => exp.id === id);
+            
+            if (index !== -1) {
+                experiences[index].status = status;
+                localStorage.setItem('experiences', JSON.stringify(experiences));
+                
+                // Animasyonlu geçiş efekti
+                const card = document.getElementById(`experience-${id}`);
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(20px)';
+                
+                setTimeout(() => {
+                    loadExperiences('pending');
+                    showNotification(
+                        status === 'approved' ? 'Deneyim başarıyla onaylandı' : 'Deneyim reddedildi',
+                        status === 'approved' ? 'success' : 'warning'
+                    );
+                }, 300);
+            }
+        }
+
+        // Deneyim silme fonksiyonu
+        function deleteExperience(id) {
+            if (!confirm('Bu deneyimi silmek istediğinizden emin misiniz?')) return;
+            
+            const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+            const index = experiences.findIndex(exp => exp.id === id);
+            
+            if (index !== -1) {
+                experiences.splice(index, 1);
+                localStorage.setItem('experiences', JSON.stringify(experiences));
+                
+                // Animasyonlu silme efekti
+                const card = document.getElementById(`experience-${id}`);
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(20px)';
+                
+                setTimeout(() => {
+                    loadExperiences(document.querySelector('.btn-group .active').dataset.status);
+                    showNotification('Deneyim başarıyla silindi', 'success');
+                }, 300);
+            }
+        }
+
+        // Bildirim gösterme fonksiyonu
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} notification`;
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 1rem; border-radius: 0.5rem;';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            // İlk yüklemede bekleyen deneyimleri göster
+            loadExperiences('pending');
+
+            // Filtre butonlarına tıklama olaylarını ekle
+            document.querySelectorAll('.btn-group button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // Aktif butonu güncelle
+                    document.querySelectorAll('.btn-group button').forEach(btn => 
+                        btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    // Seçilen duruma göre deneyimleri yükle
+                    loadExperiences(e.target.dataset.status);
+                });
+            });
+        });
     </script>
     <script src="js/admin-panel.js"></script>
 </body>

@@ -755,18 +755,57 @@ function bulkDelete() {
 }
 
 // Initialize dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    checkAdminAuth();
-    addSampleData(); // Add sample data
-    
-    updateStats();
-    updateRecentExperiences();
-    updateRecentActivities();
-    
-    // Refresh data every minute
-    setInterval(() => {
-        updateStats();
-        updateRecentExperiences();
-        updateRecentActivities();
-    }, 60000);
+document.addEventListener('DOMContentLoaded', function() {
+    // Admin oturumunu kontrol et
+    const adminInfo = JSON.parse(localStorage.getItem('admin') || sessionStorage.getItem('admin'));
+    if (!adminInfo) {
+        window.location.href = 'admingiris.html';
+        return;
+    }
+
+    // Deneyimler sayfasını yükle
+    loadContent('deneyimler.html');
+
+    // Sidebar aktif link kontrolü
+    const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (this.getAttribute('href') !== 'javascript:void(0)') {
+                e.preventDefault();
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                const href = this.getAttribute('href');
+                if (href && href !== 'javascript:void(0)') {
+                    loadContent(href);
+                }
+            }
+        });
+    });
 });
+
+function loadContent(url) {
+    const contentWrapper = document.querySelector('.content-wrapper');
+    if (!contentWrapper) return;
+
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const content = doc.querySelector('.container-fluid');
+            if (content) {
+                contentWrapper.innerHTML = content.innerHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading content:', error);
+            contentWrapper.innerHTML = '<div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div>';
+        });
+}
+
+function logout() {
+    localStorage.removeItem('admin');
+    sessionStorage.removeItem('admin');
+    window.location.href = 'admingiris.html';
+}

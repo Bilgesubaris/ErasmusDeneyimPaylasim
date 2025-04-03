@@ -5,77 +5,80 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SVG Türkiye Haritası</title>
+  <title>Erasmus Deneyimleri</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic" rel="stylesheet" type="text/css">
   <!-- SVG Türkiye Haritası -->
   <link href="svg-turkiye-haritasi.css" rel="stylesheet" />
+  <link href="modal.css" rel="stylesheet" />
 </head>
-<header>
-  <nav class="navbar">
+
+<body>
+  <!-- 🟢 Modal Kutusu -->
+  <div id="testModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="test-progress"></div>
+      <h5 id="question-text">Sorular buraya gelecek</h5>
+      <div id="answer-buttons" class="answer-buttons">
+        <!-- Cevaplar buraya eklenecek -->
+      </div>
+      <div class="modal-footer">
+        <button id="next-button" class="next-button" onclick="nextQuestion()">Sonraki Soru</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <nav class="navbar">
       <div class="nav-left">
-          <h1>Erasmus Journey</h1>
+        <h1>Erasmus Journey</h1>
       </div>
       <div class="nav-right">
         <a href="ogrencigiris.html">
           <button>Öğrenci Girişi</button>
-      </a>
-      <a href="admingiris.html">
-        <button>Admin Girişi</button>
-    </a>
-        </div>
-  </nav>
-  <hr class="navbar-divider" style="border: 1px solid gray;">
-
-</header>
-<div class="countdown-container">
-  <h2>Erasmus Başvuru Son Tarihi:</h2>
-  <div id="countdown" class="countdown"></div>
-</div>
-<marquee class="fun-text">🎉 Erasmus Seni Bekliyor! 🌍 Yeni Yerler, Yeni Maceralar! 🏛️</marquee>
-
-    <div class="container test-container">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
-          alt="Avrupa Haritası">
-      
-          <div class="text-and-button">
-            <h4>Hangi Erasmus Ülkesini Seçmelisin?</h4>
-            <button class="start-button" onclick="openModal()">Teste Başla</button>
-          </div>
+        </a>
+        <a href="admingiris.html">
+          <button>Admin Girişi</button>
+        </a>
       </div>
-  </div>
-  
+    </nav>
+    <hr class="navbar-divider" style="border: 1px solid gray;">
+  </header>
 
-<!-- JavaScript dosyasını ekleyin -->
-<script src="script.js"></script>
-  <!-- 🟢 Modal Kutusu -->
-  <div id="testModal" class="modal">
-      <div class="modal-content">
-          <span class="close" onclick="closeModal()">&times;</span>
-          <h5 id="question-text">Sorular buraya gelecek</h5>
-          <div id="answer-buttons" class="answer-buttons">
-              <!-- Cevaplar buraya eklenecek -->
-          </div>
-          <button id="next-button" class="next-button" onclick="nextQuestion()">Sonraki Soru</button>
-      </div>
-  </div>
+  <div class="countdown-container">
+    <h2>Erasmus Başvuru Son Tarihi:</h2>
+    <div id="countdown" class="countdown"></div>
   </div>
 
-    <div class="container experiences-container">
-      <div class="experiences">
-          <div class="card">
-              <h3>Aylin - Almanya</h3>
-              <p>Harika bir deneyimdi! Yeni kültürler tanımak inanılmazdı.</p>
-          </div>
-          <div class="card">
-              <h3>Mehmet - İtalya</h3>
-              <p>İtalyan mutfağı ve insanları çok sıcak! Erasmus hayatımın en güzel zamanı.</p>
-          </div>
-          <div class="card">
-              <h3>Elif - İspanya</h3>
-              <p>İspanya’da yaşamak mükemmeldi! Deniz, güneş ve eğlence dolu bir Erasmus geçirdim.</p>
-          </div>
-      </div>
+  <marquee class="fun-text">🎉 Erasmus Seni Bekliyor! 🌍 Yeni Yerler, Yeni Maceralar! 🏛️</marquee>
+
+  <div class="container test-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
+        alt="Avrupa Haritası">
+    
+    <div class="text-and-button">
+      <h4>Hangi Erasmus Ülkesini Seçmelisin?</h4>
+      <button class="start-button" onclick="openModal()">Teste Başla</button>
+    </div>
   </div>
+
+  <div class="container experiences-container">
+    <div class="experiences">
+      <div class="card">
+        <h3>Aylin - Almanya</h3>
+        <p>Harika bir deneyimdi! Yeni kültürler tanımak inanılmazdı.</p>
+      </div>
+      <div class="card">
+        <h3>Mehmet - İtalya</h3>
+        <p>İtalyan mutfağı ve insanları çok sıcak! Erasmus hayatımın en güzel zamanı.</p>
+      </div>
+      <div class="card">
+        <h3>Elif - İspanya</h3>
+        <p>İspanya'da yaşamak mükemmeldi! Deniz, güneş ve eğlence dolu bir Erasmus geçirdim.</p>
+      </div>
+    </div>
+  </div>
+
   <h2 class="country-title">Erasmus Başvurusu İçin İlham Alabileceğin Ülkeler</h2>
 
   <div class="country-cards-container">
@@ -156,8 +159,9 @@
         </div>
       </div>
 
-<script src = "js/test.js"></script>
-<script src = "js/svg-turkiye-haritasi.js"></script>
+  <script src="script.js"></script>
+  <script src="js/test.js"></script>
+  <script src="js/svg-turkiye-haritasi.js"></script>
 
 </body>
 

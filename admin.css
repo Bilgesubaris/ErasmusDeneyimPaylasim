@@ -428,6 +428,110 @@ body:not(.admin-panel) {
     min-width: 150px;
 }
 
+/* Comments Section Styles */
+.comments-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem;
+}
+
+.comment-item {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-text {
+    margin: 0.5rem 0;
+    white-space: pre-line;
+}
+
+#commentText {
+    resize: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#addCommentBtn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Admin Panel Styles */
+.sidebar {
+    min-height: 100vh;
+    background-color: #2c3e50;
+    color: white;
+    padding-top: 20px;
+}
+
+.sidebar .nav-link {
+    color: white;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #34495e;
+}
+
+.sidebar .nav-link.active {
+    background-color: #3498db;
+}
+
+.content {
+    padding: 20px;
+}
+
+.experience-card, .comment-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: white;
+}
+
+.experience-header {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+}
+
+.experience-body {
+    padding: 15px;
+}
+
+.status-badge {
+    font-size: 0.8em;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.status-pending {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
 @media (max-width: 768px) {
     .stats-card {
         padding: 1rem;
