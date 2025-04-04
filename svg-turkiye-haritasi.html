@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Erasmus Deneyimleri</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic" rel="stylesheet" type="text/css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <!-- SVG Türkiye Haritası -->
   <link href="svg-turkiye-haritasi.css" rel="stylesheet" />
   <link href="modal.css" rel="stylesheet" />
@@ -31,53 +32,102 @@
   <header>
     <nav class="navbar">
       <div class="nav-left">
-        <h1>Erasmus Journey</h1>
+        <h1><i class="fas fa-globe-europe"></i> Erasmus Journey</h1>
       </div>
       <div class="nav-right">
         <a href="ogrencigiris.html">
-          <button>Öğrenci Girişi</button>
+          <button><i class="fas fa-user-graduate"></i> Öğrenci Girişi</button>
         </a>
         <a href="admingiris.html">
-          <button>Admin Girişi</button>
+          <button><i class="fas fa-user-shield"></i> Admin Girişi</button>
         </a>
       </div>
     </nav>
     <hr class="navbar-divider" style="border: 1px solid gray;">
   </header>
 
+  <!-- Başvuru İstatistikleri -->
+  <div class="stats-container">
+    <div class="stat-item">
+      <i class="fas fa-users"></i>
+      <span class="stat-number">1,234</span>
+      <span class="stat-label">Aktif Erasmus Öğrencisi</span>
+    </div>
+    <div class="stat-item">
+      <i class="fas fa-university"></i>
+      <span class="stat-number">85</span>
+      <span class="stat-label">Partner Üniversite</span>
+    </div>
+    <div class="stat-item">
+      <i class="fas fa-globe"></i>
+      <span class="stat-number">25</span>
+      <span class="stat-label">Ülke</span>
+    </div>
+    <div class="stat-item">
+      <i class="fas fa-graduation-cap"></i>
+      <span class="stat-number">95%</span>
+      <span class="stat-label">Memnuniyet Oranı</span>
+    </div>
+  </div>
+
   <div class="countdown-container">
-    <h2>Erasmus Başvuru Son Tarihi:</h2>
+    <h2><i class="fas fa-hourglass-half"></i> Erasmus Başvuru Son Tarihi:</h2>
     <div id="countdown" class="countdown"></div>
   </div>
 
-  <marquee class="fun-text">🎉 Erasmus Seni Bekliyor! 🌍 Yeni Yerler, Yeni Maceralar! 🏛️</marquee>
+  <marquee class="fun-text">
+    🎉 Erasmus Seni Bekliyor! 🌍 Yeni Yerler, Yeni Maceralar! 🏛️ 
+    <span class="highlight">2024-2025 Dönemi Kontenjanları Açıklandı!</span> 
+    🎓 Hayalindeki Üniversiteye Başvur!
+  </marquee>
 
   <div class="container test-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
-        alt="Avrupa Haritası">
+    <div class="europe-map-container">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_borders%29.svg" 
+          alt="Avrupa Haritası" class="europe-map">
+      <div class="map-markers">
+        <div class="map-marker" style="top: 40%; left: 45%;" title="Almanya">🇩🇪</div>
+        <div class="map-marker" style="top: 50%; left: 40%;" title="İtalya">🇮🇹</div>
+        <div class="map-marker" style="top: 60%; left: 30%;" title="İspanya">🇪🇸</div>
+        <div class="map-marker" style="top: 45%; left: 55%;" title="Polonya">🇵🇱</div>
+      </div>
+    </div>
     
     <div class="text-and-button">
-      <h4>Hangi Erasmus Ülkesini Seçmelisin?</h4>
-      <button class="start-button" onclick="openModal()">Teste Başla</button>
+      <h4><i class="fas fa-compass"></i> Hangi Erasmus Ülkesini Seçmelisin?</h4>
+      <p class="test-description">Kişilik özelliklerine ve tercihlerine göre en uygun Erasmus ülkesini bul!</p>
+      <button class="start-button" onclick="openModal()">
+        <i class="fas fa-play"></i> Teste Başla
+      </button>
     </div>
   </div>
 
-  <div class="container experiences-container">
-    <div class="experiences">
-      <div class="card">
-        <h3>Aylin - Almanya</h3>
-        <p>Harika bir deneyimdi! Yeni kültürler tanımak inanılmazdı.</p>
+  <div class="quick-facts">
+    <h3><i class="fas fa-lightbulb"></i> Erasmus+ Hakkında Bilmeniz Gerekenler</h3>
+    <div class="facts-grid">
+      <div class="fact-item">
+        <i class="fas fa-euro-sign"></i>
+        <h4>Hibe Desteği</h4>
+        <p>Aylık 600-700€ arası hibe desteği alabilirsiniz.</p>
       </div>
-      <div class="card">
-        <h3>Mehmet - İtalya</h3>
-        <p>İtalyan mutfağı ve insanları çok sıcak! Erasmus hayatımın en güzel zamanı.</p>
+      <div class="fact-item">
+        <i class="fas fa-calendar-alt"></i>
+        <h4>Süre</h4>
+        <p>3-12 ay arası eğitim alma imkanı</p>
       </div>
-      <div class="card">
-        <h3>Elif - İspanya</h3>
-        <p>İspanya'da yaşamak mükemmeldi! Deniz, güneş ve eğlence dolu bir Erasmus geçirdim.</p>
+      <div class="fact-item">
+        <i class="fas fa-language"></i>
+        <h4>Dil Desteği</h4>
+        <p>Ücretsiz online dil kursu imkanı</p>
+      </div>
+      <div class="fact-item">
+        <i class="fas fa-hand-holding-heart"></i>
+        <h4>Ek Destek</h4>
+        <p>Engelli öğrenciler için özel hibe imkanı</p>
       </div>
     </div>
   </div>
+
 
   <h2 class="country-title">Erasmus Başvurusu İçin İlham Alabileceğin Ülkeler</h2>
 
@@ -88,7 +138,7 @@
         <h3>İtalya</h3>
       </div>
       <div class="card-body">
-        <p>Roma'nın büyüleyici tarihi ve leziz İtalyan mutfağıyla tanışın!</p>
+        <p>Roma’nın büyüleyici tarihi ve leziz İtalyan mutfağıyla tanışın!</p>
         <ul>
           <li>Başkent: Roma</li>
           <li>Dil: İtalyanca</li>
@@ -102,7 +152,7 @@
         <h3>Romanya</h3>
       </div>
       <div class="card-body">
-        <p>Romanya'nın büyüleyici tarihi ve kültürel zenginlikleriyle tanışın!</p>
+        <p>Romanya’nın büyüleyici tarihi ve kültürel zenginlikleriyle tanışın!</p>
         <ul>
           <li>Başkent: Bükreş</li>
           <li>Dil: Rumence</li>
@@ -117,7 +167,7 @@
         <h3>Almanya</h3>
       </div>
       <div class="card-body">
-        <p>Almanya'nın tarihi şehirleri ve müzik kültürüyle tanışın!</p>
+        <p>Almanya’nın tarihi şehirleri ve müzik kültürüyle tanışın!</p>
         <ul>
           <li>Başkent: Berlin</li>
           <li>Dil: Almanca</li>
@@ -133,7 +183,7 @@
         <h3>Polonya</h3>
       </div>
       <div class="card-body">
-          <p>Varşova'nın modern yapıları ve Krakow’un tarihi ile tanışın!</p>
+          <p>Varşova’nın modern yapıları ve Krakow’un tarihi ile tanışın!</p>
           <ul>
               <li>Başkent: Varşova</li>
               <li>Dil: Lehçe</li>
@@ -149,7 +199,7 @@
           <h3>Litvanya</h3>
         </div>
         <div class="card-body">
-          <p>Bled Gölü'nün muazzam manzarası ve huzur dolu atmosferi keşfedin!</p>
+          <p>Bled Gölü’nün muazzam manzarası ve huzur dolu atmosferi keşfedin!</p>
           <ul>
               <li>Başkent: Ljubljana</li>
               <li>Dil: Slovence</li>
@@ -162,7 +212,7 @@
   <script src="script.js"></script>
   <script src="js/test.js"></script>
   <script src="js/svg-turkiye-haritasi.js"></script>
-
+  <script src="js/countdown.js"></script>
 </body>
 
 </html>

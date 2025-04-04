@@ -416,6 +416,123 @@ body {
     font-size: 1rem;
 }
 
+/* Deneyim görüntüleme ve yorum stilleri */
+.experience-details {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.experience-photo {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.experience-photo:hover {
+    transform: scale(1.05);
+}
+
+.comments-section {
+    margin-top: 2rem;
+}
+
+.comment-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.comment-date {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.comment-content {
+    color: #2c3e50;
+    line-height: 1.5;
+}
+
+#commentsList {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+    padding-right: 0.5rem;
+}
+
+#commentsList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#commentsList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#commentsList::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+#commentsList::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.save-button {
+    transition: all 0.2s;
+}
+
+.save-button.saved {
+    color: #198754;
+    border-color: #198754;
+}
+
+.save-button.saved:hover {
+    background-color: #198754;
+    color: white;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
 /* Filters */
 .filters {
     background-color: var(--surface-color);
