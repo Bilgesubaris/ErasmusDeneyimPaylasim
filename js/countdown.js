@@ -1,4 +1,4 @@
-// Geri sayım için bitiş tarihi (30 Mart 2025)
+ // Geri sayım için bitiş tarihi (30 Mart 2025)
 const endDate = new Date('March 30, 2025 23:59:59').getTime();
 
 function updateCountdown() {
@@ -39,7 +39,7 @@ function updateCountdown() {
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
         
-        // Süre devam ediyorsa
+        // Süre devam ediyorsa geri sayımı güncelle
         countdownElement.innerHTML = `
             <div class="countdown-item">
                 <span class="countdown-value">${days}</span>

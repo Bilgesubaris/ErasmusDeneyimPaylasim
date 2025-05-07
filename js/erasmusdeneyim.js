@@ -106,7 +106,7 @@ async function handleExperienceSubmit(event) {
         date: new Date().toISOString(),
         userId: JSON.parse(localStorage.getItem('kullanici'))?.email,
         userName: JSON.parse(localStorage.getItem('kullanici'))?.ad,
-        status: 'pending'
+        status: 'pending' // Burada status değerini 'pending' olarak ayarlıyoruz
     };
 
     // Zorunlu alanları kontrol et
@@ -148,7 +148,7 @@ async function handleExperienceSubmit(event) {
 
     // Mevcut deneyimleri al ve yeni deneyimi ekle
     const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    experiences.unshift(experience);
+    experiences.unshift(experience); // Yeni deneyimi listenin başına ekle
     localStorage.setItem('experiences', JSON.stringify(experiences));
 
     // Formu sıfırla

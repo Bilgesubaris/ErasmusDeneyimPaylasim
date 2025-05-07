@@ -1,98 +1,123 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Kullanıcı bilgilerini kontrol et ve yükle
-    const kullanici = JSON.parse(localStorage.getItem('kullanici')) || {};
-    
-    // Form elemanlarını doldur
-    document.getElementById('fullName').value = kullanici.ad || '';
-    document.getElementById('email').value = kullanici.email || '';
-    document.getElementById('university').value = kullanici.universite || '';
-    document.getElementById('department').value = kullanici.bolum || '';
-    document.getElementById('about').value = kullanici.hakkimda || '';
-    document.getElementById('linkedin').value = kullanici.linkedin || '';
-    document.getElementById('instagram').value = kullanici.instagram || '';
+    loadUserProfile();
+    setupEventListeners();
+});
 
-    // Profil resimlerini güncelle
-    if (kullanici.profilResmi) {
-        document.getElementById('mainProfileImage').src = kullanici.profilResmi;
-        document.getElementById('navProfileImage').src = kullanici.profilResmi;
-    }
-
-    // Profil adını güncelle
-    document.getElementById('profileName').textContent = kullanici.ad || 'Kullanıcı Adı';
-    document.getElementById('navProfileName').textContent = kullanici.ad || 'Kullanıcı Adı';
+function loadUserProfile() {
+    const userInfo = JSON.parse(localStorage.getItem('kullanici')) || {};
     
-    // Üniversite bilgisini güncelle
+    // Profil bilgilerini doldur
+    document.getElementById('profileName').textContent = userInfo.ad || 'Kullanıcı Adı';
     document.getElementById('universityInfo').textContent = 
-        (kullanici.universite && kullanici.bolum) ? 
-        `${kullanici.universite} - ${kullanici.bolum}` : 
-        'Üniversite - Bölüm';
+        `${userInfo.universite || 'Üniversite'} - ${userInfo.bolum || 'Bölüm'}`;
+    
+    if (userInfo.profilResmi) {
+        document.getElementById('mainProfileImage').src = userInfo.profilResmi;
+    }
+    
+    // Form alanlarını doldur
+    document.getElementById('fullName').value = userInfo.ad || '';
+    document.getElementById('email').value = userInfo.email || '';
+    document.getElementById('university').value = userInfo.universite || '';
+    document.getElementById('department').value = userInfo.bolum || '';
+    document.getElementById('about').value = userInfo.hakkimda || '';
+    document.getElementById('linkedin').value = userInfo.linkedin || '';
+    document.getElementById('instagram').value = userInfo.instagram || '';
+    
+    // İstatistikleri güncelle
+    updateProfileStats();
+}
 
-    // İstatistikleri güncelle (demo veriler)
-    document.getElementById('experienceCount').textContent = '2';
-    document.getElementById('commentCount').textContent = '5';
-
-    // Profil formu gönderildiğinde
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Kullanıcı bilgilerini güncelle
-        kullanici.ad = document.getElementById('fullName').value;
-        kullanici.universite = document.getElementById('university').value;
-        kullanici.bolum = document.getElementById('department').value;
-        kullanici.hakkimda = document.getElementById('about').value;
-        kullanici.linkedin = document.getElementById('linkedin').value;
-        kullanici.instagram = document.getElementById('instagram').value;
-
-        // LocalStorage'a kaydet
-        localStorage.setItem('kullanici', JSON.stringify(kullanici));
-
-        // Profil adını ve üniversite bilgisini güncelle
-        document.getElementById('profileName').textContent = kullanici.ad;
-        document.getElementById('navProfileName').textContent = kullanici.ad;
-        document.getElementById('universityInfo').textContent = 
-            `${kullanici.universite} - ${kullanici.bolum}`;
-
-        // Başarı mesajını göster
-        const successAlert = document.getElementById('successAlert');
-        successAlert.classList.remove('d-none');
-        
-        // 3 saniye sonra mesajı gizle
-        setTimeout(() => {
-            successAlert.classList.add('d-none');
-        }, 3000);
-    });
-
-    // Profil resmi değiştirme
-    document.getElementById('photoInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageData = e.target.result;
-                // Profil resimlerini güncelle
-                document.getElementById('mainProfileImage').src = imageData;
-                document.getElementById('navProfileImage').src = imageData;
-                // LocalStorage'a kaydet
-                kullanici.profilResmi = imageData;
-                localStorage.setItem('kullanici', JSON.stringify(kullanici));
-                
-                // Başarı mesajını göster
-                const successAlert = document.getElementById('successAlert');
-                successAlert.textContent = 'Profil resmi başarıyla güncellendi!';
-                successAlert.classList.remove('d-none');
-                
-                // 3 saniye sonra mesajı gizle
-                setTimeout(() => {
-                    successAlert.classList.add('d-none');
-                }, 3000);
-            };
-            reader.readAsDataURL(file);
+function updateProfileStats() {
+    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
+    const userEmail = JSON.parse(localStorage.getItem('kullanici'))?.email;
+    
+    const userExperiences = experiences.filter(exp => exp.userId === userEmail);
+    document.getElementById('experienceCount').textContent = userExperiences.length;
+    
+    let commentCount = 0;
+    experiences.forEach(exp => {
+        if (exp.comments) {
+            commentCount += exp.comments.filter(comment => comment.userId === userEmail).length;
         }
     });
+    document.getElementById('commentCount').textContent = commentCount;
+}
 
-    // Çıkış yapma fonksiyonu
-    window.cikisYap = function() {
-        localStorage.removeItem('kullanici');
-        window.location.href = 'svg-turkiye-haritasi.html';
-    };
-});
+function setupEventListeners() {
+    // Profil fotoğrafı değiştirme
+    document.getElementById('photoInput').addEventListener('change', handlePhotoChange);
+    
+    // Profil formu gönderimi
+    document.getElementById('profileForm').addEventListener('submit', handleProfileSubmit);
+}
+
+async function handlePhotoChange(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Lütfen geçerli bir resim dosyası seçin.');
+        return;
+    }
+    
+    try {
+        const base64Image = await convertToBase64(file);
+        document.getElementById('mainProfileImage').src = base64Image;
+        
+        // Kullanıcı bilgilerini güncelle
+        const userInfo = JSON.parse(localStorage.getItem('kullanici')) || {};
+        userInfo.profilResmi = base64Image;
+        localStorage.setItem('kullanici', JSON.stringify(userInfo));
+        
+        showSuccessMessage('Profil fotoğrafı başarıyla güncellendi!');
+    } catch (error) {
+        console.error('Fotoğraf yükleme hatası:', error);
+        alert('Fotoğraf yüklenirken bir hata oluştu.');
+    }
+}
+
+function handleProfileSubmit(event) {
+    event.preventDefault();
+    
+    const userInfo = JSON.parse(localStorage.getItem('kullanici')) || {};
+    
+    // Form verilerini al ve kullanıcı bilgilerini güncelle
+    userInfo.ad = document.getElementById('fullName').value;
+    userInfo.universite = document.getElementById('university').value;
+    userInfo.bolum = document.getElementById('department').value;
+    userInfo.hakkimda = document.getElementById('about').value;
+    userInfo.linkedin = document.getElementById('linkedin').value;
+    userInfo.instagram = document.getElementById('instagram').value;
+    
+    // Kullanıcı bilgilerini kaydet
+    localStorage.setItem('kullanici', JSON.stringify(userInfo));
+    
+    // Profil görünümünü güncelle
+    document.getElementById('profileName').textContent = userInfo.ad;
+    document.getElementById('universityInfo').textContent = 
+        `${userInfo.universite} - ${userInfo.bolum}`;
+    
+    showSuccessMessage('Profil bilgileriniz başarıyla güncellendi!');
+}
+
+function showSuccessMessage(message) {
+    const alert = document.getElementById('successAlert');
+    const messageElement = document.getElementById('successMessage');
+    
+    messageElement.textContent = message;
+    alert.classList.remove('d-none');
+    
+    setTimeout(() => {
+        alert.classList.add('d-none');
+    }, 3000);
+}
+
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}

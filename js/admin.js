@@ -83,34 +83,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Admin panel functions
 function loadExperiences() {
-    const experiencesList = document.getElementById('experiences-list');
+    const experiencesList = document.getElementById('experiencesContainer');
     if (!experiencesList) return;
 
     const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    experiencesList.innerHTML = experiences.map(exp => `
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between">
-                <h5 class="mb-0">${exp.title}</h5>
-                <span class="badge ${exp.status === 'approved' ? 'bg-success' : 
-                                   exp.status === 'rejected' ? 'bg-danger' : 'bg-warning'}">
-                    ${exp.status || 'Beklemede'}
-                </span>
+    const pendingExperiences = experiences.filter(exp => !exp.status || exp.status === 'pending');
+    
+    if (pendingExperiences.length === 0) {
+        experiencesList.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Onay bekleyen deneyim bulunmuyor
+            </div>
+        `;
+        return;
+    }
+
+    experiencesList.innerHTML = pendingExperiences.map(exp => `
+        <div class="card mb-4" id="experience-${exp.id}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">${exp.title || 'İsimsiz Deneyim'}</h5>
+                    <small class="text-muted">
+                        ${exp.userName} tarafından ${new Date(exp.date).toLocaleDateString('tr-TR')} tarihinde gönderildi
+                    </small>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-success" onclick="updateStatus('${exp.id}', 'approved')">
+                        <i class="fas fa-check me-1"></i>Onayla
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="updateStatus('${exp.id}', 'rejected')">
+                        <i class="fas fa-times me-1"></i>Reddet
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="viewExperience('${exp.id}')">
+                        <i class="fas fa-eye me-1"></i>Görüntüle
+                    </button>
+                </div>
             </div>
             <div class="card-body">
-                <p class="card-text">${exp.experience}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                        ${!exp.status ? `
-                            <button class="btn btn-sm btn-success" onclick="updateStatus('${exp.id}', 'approved')">
-                                Onayla
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="updateStatus('${exp.id}', 'rejected')">
-                                Reddet
-                            </button>
-                        ` : ''}
-                    </div>
-                    <small class="text-muted">${new Date(exp.date).toLocaleDateString('tr-TR')}</small>
-                </div>
+                <p class="card-text">${exp.experience || exp.content}</p>
             </div>
         </div>
     `).join('');

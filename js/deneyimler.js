@@ -219,3 +219,39 @@ function setupFilters() {
         filterStatus.addEventListener('change', loadExperiences);
     }
 }
+
+document.getElementById('experienceForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const formData = {
+        id: Date.now().toString(),
+        university: document.getElementById('university').value,
+        country: document.getElementById('country').value,
+        city: document.getElementById('city').value,
+        semester: document.getElementById('semester').value,
+        title: document.getElementById('title').value,
+        experience: document.getElementById('experience').value,
+        rating: document.getElementById('rating').value,
+        accommodation: document.getElementById('accommodation').value,
+        monthlyExpense: document.getElementById('monthlyExpense').value,
+        date: new Date().toISOString(),
+        status: 'pending', // Yeni eklenen deneyimlere 'pending' durumu atanıyor
+        userName: JSON.parse(localStorage.getItem('kullanici')).ad,
+        userEmail: JSON.parse(localStorage.getItem('kullanici')).email,
+        userImage: JSON.parse(localStorage.getItem('kullanici')).profilResmi
+    };
+    
+    // Mevcut deneyimleri al ve yenisini ekle
+    const experiences = JSON.parse(localStorage.getItem('experiences') || '[]');
+    experiences.push(formData);
+    localStorage.setItem('experiences', JSON.stringify(experiences));
+    
+    // Modal'ı kapat ve başarı mesajı göster
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addExperienceModal'));
+    modal.hide();
+    
+    showNotification('Deneyiminiz başarıyla paylaşıldı ve onay için gönderildi', 'success');
+    
+    // Deneyimleri yeniden yükle
+    loadExperiences();
+});
