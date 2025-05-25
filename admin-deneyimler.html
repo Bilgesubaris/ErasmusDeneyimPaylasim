@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Deneyim Yönetimi - Admin Panel</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -27,13 +27,13 @@
             <h3>Admin Panel</h3>
         </div>
         <ul class="sidebar-menu">
-            <li class="active">
+            <li>
                 <a href="admin-panel.html">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li>
+            <li class="active">
                 <a href="admin-deneyimler.html">
                     <i class="fas fa-book"></i>
                     <span>Deneyimler</span>
@@ -94,62 +94,69 @@
         <!-- Page Content -->
         <div class="content-wrapper">
             <div class="container-fluid">
-                <h1>Dashboard</h1>
-                
-                <!-- İstatistik Kartları -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="card bg-primary text-white">
-                            <div class="card-body">
-                                <h5 class="card-title">Toplam Kullanıcı</h5>
-                                <h2 class="card-text" id="totalUsers">0</h2>
-                                <i class="fas fa-users card-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card bg-warning text-white">
-                            <div class="card-body">
-                                <h5 class="card-title">Bekleyen Deneyimler</h5>
-                                <h2 class="card-text" id="pendingExperiences">0</h2>
-                                <i class="fas fa-clock card-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card bg-success text-white">
-                            <div class="card-body">
-                                <h5 class="card-title">Onaylanmış Deneyimler</h5>
-                                <h2 class="card-text" id="approvedExperiences">0</h2>
-                                <i class="fas fa-check card-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card bg-info text-white">
-                            <div class="card-body">
-                                <h5 class="card-title">Toplam Deneyim</h5>
-                                <h2 class="card-text" id="totalExperiences">0</h2>
-                                <i class="fas fa-book card-icon"></i>
-                            </div>
-                        </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Deneyim Yönetimi</h1>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary active" data-filter="pending">
+                            <i class="fas fa-clock me-2"></i>Onay Bekleyenler
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="approved">
+                            <i class="fas fa-check me-2"></i>Onaylananlar
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="rejected">
+                            <i class="fas fa-times me-2"></i>Reddedilenler
+                        </button>
                     </div>
                 </div>
 
-                <!-- Son Aktiviteler -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Son Aktiviteler</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="recentActivities" class="activity-list">
-                                    <!-- Aktiviteler JavaScript ile buraya eklenecek -->
-                                </div>
-                            </div>
+                <!-- Deneyimler Tablosu -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Başlık</th>
+                                        <th>Üniversite</th>
+                                        <th>Ülke</th>
+                                        <th>Kullanıcı</th>
+                                        <th>Tarih</th>
+                                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                                <tbody id="experiencesTableBody">
+                                    <!-- Deneyimler JavaScript ile buraya eklenecek -->
+                </tbody>
+            </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deneyim Detay Modal -->
+    <div class="modal fade" id="experienceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Deneyim Detayları</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="experienceDetails">
+                        <!-- Deneyim detayları JavaScript ile buraya eklenecek -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-danger" onclick="rejectExperience()">
+                        <i class="fas fa-times me-2"></i>Reddet
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="approveExperience()">
+                        <i class="fas fa-check me-2"></i>Onayla
+                    </button>
                 </div>
             </div>
         </div>
@@ -186,7 +193,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Custom JS -->
-    <script src="js/admin-panel.js"></script>
+    <script src="js/admin-deneyimler.js"></script>
 
     <script>
         // Sayfa yüklendiğinde loading spinner'ı gizle
@@ -204,7 +211,7 @@
             }).catch((error) => {
                 console.error('Çıkış hatası:', error);
             });
-        }
+                }
     </script>
 </body>
-</html> 
+</html>

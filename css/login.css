@@ -1,0 +1,140 @@
+/* Login Sayfası CSS */
+
+:root {
+    --primary-color: #2C3E50;
+    --primary-dark: #1a252f;
+    --primary-rgb: 44, 62, 80;
+    --accent-color: #3498DB;
+    --accent-dark: #2980B9;
+    --accent-rgb: 52, 152, 219;
+    --success-color: #27AE60;
+    --danger-color: #E74C3C;
+    --warning-color: #F1C40F;
+    --background-color: #F7F9FC;
+    --surface-color: #FFFFFF;
+    --text-color: #2C3E50;
+    --text-secondary: #5D7A8C;
+    --border-color: #E2E8F0;
+    --border-radius: 0.5rem;
+    --box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --transition: all 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem;
+}
+
+.auth-box {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    padding: 2rem;
+}
+
+.auth-box .fa-user-shield {
+    color: var(--accent-color);
+}
+
+.auth-box h2 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.auth-box p {
+    font-size: 0.925rem;
+}
+
+.input-group-text {
+    background-color: var(--background-color);
+    border-right: none;
+    color: var(--text-secondary);
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+.input-group .form-control:focus {
+    border-color: var(--border-color);
+    box-shadow: none;
+}
+
+.input-group:focus-within {
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.1);
+}
+
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control {
+    border-color: var(--accent-color);
+}
+
+.form-label {
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.925rem;
+}
+
+.form-check-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    border: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-white {
+    background: white;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-white:hover {
+    background: var(--background-color);
+    color: var(--accent-dark);
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+@media (max-width: 576px) {
+    .auth-container {
+        padding: 1rem;
+    }
+
+    .auth-box {
+        padding: 1.5rem;
+    }
+}

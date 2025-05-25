@@ -1,179 +1,172 @@
-// Admin credentials
-const ADMIN_EMAIL = 'admin@erasmus.com';
-const ADMIN_PASSWORD = 'admin123';
+// Firebase yapılandırması
+const firebaseConfig = {
+    apiKey: "AIzaSyB3jCeB9tFUGAbj1XSrjkRkSme98C4fGqc",
+    authDomain: "webprojem-6fb9a.firebaseapp.com",
+    projectId: "webprojem-6fb9a",
+    storageBucket: "webprojem-6fb9a.firebasestorage.app",
+    messagingSenderId: "571224024778",
+    appId: "1:571224024778:web:77ab0b61a0a97e219f7633",
+    measurementId: "G-M2JJY0MR0Q"
+};
 
-// Form submit olayını dinle
-document.addEventListener('DOMContentLoaded', function() {
-    // Eğer zaten admin girişi yapılmışsa panel sayfasına yönlendir
-    const adminSession = JSON.parse(localStorage.getItem('admin') || sessionStorage.getItem('admin'));
-    if (adminSession) {
-        window.location.href = 'admin-panel.html';
-        return;
-    }
+// Firebase'i başlat
+firebase.initializeApp(firebaseConfig);
 
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Form verilerini al
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
-            const errorMessage = document.getElementById('error-message');
-
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                // Admin bilgilerini sakla
-                const adminInfo = {
-                    email: email,
-                    role: 'admin',
-                    lastLogin: new Date().toISOString()
-                };
+// Admin girişi
+document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    const submitButton = this.querySelector('button[type="submit"]');
+    
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Giriş Yapılıyor...';
+    
+    // Firebase Authentication ile giriş yap
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Firestore'dan kullanıcı rolünü kontrol et
+            return firebase.firestore().collection('admin_table').doc(userCredential.user.uid).get();
+        })
+        .then((doc) => {
+            if (doc.exists && doc.data().role === 'admin' && doc.data().status === 'active') {
+                console.log('Admin girişi başarılı');
+                // Kullanıcı bilgilerini localStorage'a kaydet
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                localStorage.setItem('adminName', doc.data().fullName);
+                localStorage.setItem('adminId', doc.id);
+                localStorage.setItem('adminEmail', doc.data().email);
+                localStorage.setItem('adminPermissions', JSON.stringify(doc.data().permissions));
                 
-                if (remember) {
-                    localStorage.setItem('admin', JSON.stringify(adminInfo));
-                } else {
-                    sessionStorage.setItem('admin', JSON.stringify(adminInfo));
-                }
-
-                // Admin paneline yönlendir
-                window.location.href = 'admin-panel.html';
+                // Başarılı giriş
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı!',
+                    text: 'Giriş başarıyla yapıldı.',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    // Admin paneline yönlendir
+                    window.location.href = 'admin-panel.html';
+                });
             } else {
-                // Hata mesajını göster
-                errorMessage.style.display = 'block';
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 3000);
+                // Admin değilse veya hesap aktif değilse çıkış yap
+                return firebase.auth().signOut().then(() => {
+                    throw new Error('Bu hesap aktif bir admin hesabı değil!');
+                });
             }
-        });
-    }
-
-    // Admin oturum kontrolü
-    const currentPage = window.location.pathname.split('/').pop();
-    const admin = JSON.parse(localStorage.getItem('admin') || sessionStorage.getItem('admin') || 'null');
-
-    if (currentPage === 'admin-panel.html') {
-        if (!admin) {
-            window.location.href = 'admingiris.html';
-        }
-    } else if (currentPage === 'admingiris.html') {
-        if (admin) {
-            window.location.href = 'admin-panel.html';
-        }
-    }
-
-    // Navbar linklerini dinle
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href').substring(1);
-            
-            // Aktif sekmeyi güncelle
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Bölümleri göster/gizle
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = section.id === targetId ? 'block' : 'none';
+        })
+        .catch((error) => {
+            console.error('Giriş hatası:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata!',
+                text: error.message || 'E-posta veya şifre hatalı!'
             });
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Giriş Yap';
         });
-    });
 });
 
-// Admin panel functions
-function loadExperiences() {
-    const experiencesList = document.getElementById('experiencesContainer');
-    if (!experiencesList) return;
-
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const pendingExperiences = experiences.filter(exp => !exp.status || exp.status === 'pending');
+// Admin kaydı
+document.getElementById('adminRegisterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     
-    if (pendingExperiences.length === 0) {
-        experiencesList.innerHTML = `
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                Onay bekleyen deneyim bulunmuyor
-            </div>
-        `;
+    const fullName = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+    const submitButton = this.querySelector('button[type="submit"]');
+    
+    // Şifre kontrolü
+    if (password !== passwordConfirm) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+            text: 'Şifreler eşleşmiyor!'
+        });
         return;
     }
-
-    experiencesList.innerHTML = pendingExperiences.map(exp => `
-        <div class="card mb-4" id="experience-${exp.id}">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-0">${exp.title || 'İsimsiz Deneyim'}</h5>
-                    <small class="text-muted">
-                        ${exp.userName} tarafından ${new Date(exp.date).toLocaleDateString('tr-TR')} tarihinde gönderildi
-                    </small>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-sm btn-success" onclick="updateStatus('${exp.id}', 'approved')">
-                        <i class="fas fa-check me-1"></i>Onayla
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="updateStatus('${exp.id}', 'rejected')">
-                        <i class="fas fa-times me-1"></i>Reddet
-                    </button>
-                    <button class="btn btn-sm btn-primary" onclick="viewExperience('${exp.id}')">
-                        <i class="fas fa-eye me-1"></i>Görüntüle
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="card-text">${exp.experience || exp.content}</p>
-            </div>
-        </div>
-    `).join('');
-}
-
-function updateStatus(id, status) {
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const index = experiences.findIndex(exp => exp.id === id);
     
-    if (index !== -1) {
-        experiences[index].status = status;
-        localStorage.setItem('experiences', JSON.stringify(experiences));
-        
-        // Deneyimler sekmesine git
-        if (status === 'approved') {
-            window.location.href = '#experiences';
-            
-            // Aktif sekmeyi güncelle
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Kayıt Yapılıyor...';
+    
+    // Firebase Auth ile kullanıcı oluştur
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Firestore'a admin bilgilerini kaydet
+            return firebase.firestore().collection('admin_table').doc(userCredential.user.uid).set({
+                fullName: fullName,
+                email: email,
+                role: 'admin',
+                status: 'pending', // Yönetici onayı bekliyor
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                permissions: {
+                    canManageUsers: false,
+                    canManageExperiences: false,
+                    canManageReports: false
+                }
             });
-            document.querySelector('a.nav-link[href="#experiences"]').classList.add('active');
-            
-            // İlgili bölümü göster
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
+        })
+        .then(() => {
+            // Başarılı kayıt
+            Swal.fire({
+                icon: 'success',
+                title: 'Başarılı!',
+                text: 'Kayıt başarıyla tamamlandı. Yönetici onayı bekleniyor.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                // Modal'ı kapat
+                const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                modal.hide();
+                // Formu temizle
+                document.getElementById('adminRegisterForm').reset();
             });
-            document.getElementById('experiences').style.display = 'block';
-        }
-        
-        // Deneyimleri yeniden yükle
-        loadExperiences();
-        
-        // Başarı mesajını göster
-        showNotification(status === 'approved' ? 'Deneyim onaylandı' : 'Deneyim reddedildi', 'success');
+        })
+        .catch((error) => {
+            console.error('Kayıt hatası:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata!',
+                text: error.message || 'Kayıt işlemi başarısız oldu!'
+            });
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Kayıt Ol';
+        });
+});
+
+// Sayfa yüklendiğinde oturum kontrolü
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // Kullanıcı oturumu varsa Firestore'dan rol kontrolü yap
+        firebase.firestore().collection('admin_table').doc(user.uid).get()
+            .then((doc) => {
+                if (doc.exists && doc.data().role === 'admin' && doc.data().status === 'active') {
+                    // Admin oturumu varsa admin paneline yönlendir
+                    window.location.href = 'admin-panel.html';
+                } else {
+                    // Admin değilse veya hesap aktif değilse çıkış yap
+                    firebase.auth().signOut();
+                    clearLocalStorage();
+                }
+            })
+            .catch((error) => {
+                console.error('Oturum kontrolü hatası:', error);
+                firebase.auth().signOut();
+                clearLocalStorage();
+            });
     }
-}
+});
 
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} notification`;
-    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000;';
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Load admin panel content if on admin page
-if (window.location.pathname.endsWith('admin-panel.html')) {
-    loadExperiences();
+// LocalStorage temizleme fonksiyonu
+function clearLocalStorage() {
+    localStorage.removeItem('isAdminLoggedIn');
+    localStorage.removeItem('adminName');
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminEmail');
+    localStorage.removeItem('adminPermissions');
 }

@@ -1,40 +1,341 @@
 <!DOCTYPE html>
-<html lang="tr" dir="ltr">
+<html lang="tr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
-    <link rel="stylesheet" href="ogrencigiris.css">
+    <title>Kayıt Ol - Erasmus Deneyimleri</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="js/universities.js"></script>
+    <link rel="stylesheet" href="erasmusdeneyim.css">
 </head>
-<body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <h2 class="text-center mb-4">Login</h2>
-            <form onsubmit="return handleLogin(event)">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" required>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <a href="erasmusdeneyim.html" class="text-decoration-none">
+                                <h2 class="text-primary">
+                                    <i class="fas fa-globe-europe me-2"></i>
+                                    Erasmus Deneyimleri
+                                </h2>
+                            </a>
+                            <p class="text-muted">Hesap oluştur ve deneyimlerini paylaş</p>
+                        </div>
+
+                        <form id="registerForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Kullanıcı Adı</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="username" name="username" required
+                                        minlength="3" maxlength="20" pattern="[a-zA-Z0-9._]+"
+                                        title="Kullanıcı adı sadece harf, rakam, nokta ve alt çizgi içerebilir">
+                                </div>
+                                <div class="form-text">3-20 karakter, sadece harf, rakam, nokta ve alt çizgi</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-posta</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Şifre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" required
+                                        minlength="6" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+                                        title="En az 6 karakter, en az 1 harf ve 1 rakam içermeli">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">En az 6 karakter, en az 1 harf ve 1 rakam</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="university" class="form-label">Üniversite</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-university"></i>
+                                    </span>
+                                    <select class="form-select" id="university" name="university" required>
+                                        <option value="">Üniversite Seçiniz</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="department" class="form-label">Bölüm</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="department" name="department" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="studentNumber" class="form-label">Öğrenci Numarası</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-id-card"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="studentNumber" name="studentNumber" required
+                                        pattern="[0-9]+" title="Sadece rakam giriniz">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="grade" class="form-label">Sınıf</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-layer-group"></i>
+                                    </span>
+                                    <select class="form-select" id="grade" name="grade" required>
+                                        <option value="">Seçiniz</option>
+                                        <option value="1">1. Sınıf</option>
+                                        <option value="2">2. Sınıf</option>
+                                        <option value="3">3. Sınıf</option>
+                                        <option value="4">4. Sınıf</option>
+                                        <option value="5">5. Sınıf</option>
+                                        <option value="6">6. Sınıf</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="gpa" class="form-label">Not Ortalaması</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calculator"></i>
+                                    </span>
+                                    <input type="number" class="form-control" id="gpa" name="gpa" required
+                                        min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Telefon Numarası</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-phone"></i>
+                                    </span>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required
+                                        pattern="[0-9]{10}" title="10 haneli telefon numarası giriniz (5XX XXX XX XX)"
+                                        placeholder="5XX XXX XX XX">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    <a href="#" class="text-decoration-none">Kullanım koşullarını</a> ve 
+                                    <a href="#" class="text-decoration-none">gizlilik politikasını</a> kabul ediyorum
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                                </button>
+                                <a href="ogrencigiris.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">İsim</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Soyisim</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Oluşturmak İstediğiniz Şifreyi Giriniz</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
-               
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="ogrencigiris.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Firebase yapılandırması
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3jCeB9tFUGAbj1XSrjkRkSme98C4fGqc",
+            authDomain: "webprojem-6fb9a.firebaseapp.com",
+            projectId: "webprojem-6fb9a",
+            storageBucket: "webprojem-6fb9a.firebasestorage.app",
+            messagingSenderId: "571224024778",
+            appId: "1:571224024778:web:77ab0b61a0a97e219f7633",
+            measurementId: "G-M2JJY0MR0Q"
+        };
+
+        // Firebase'i başlat
+        firebase.initializeApp(firebaseConfig);
+
+        // Sayfa yüklendiğinde üniversiteleri yükle
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUniversities();
+        });
+
+        // Üniversiteleri yükle
+        function loadUniversities() {
+            const universitySelect = document.getElementById('university');
+            
+            // Önce Firestore'dan üniversiteleri kontrol et
+            firebase.firestore().collection('universities').get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        // Üniversiteler yoksa kaydet
+                        return saveUniversitiesToFirestore().then(() => {
+                            // Kayıt sonrası tekrar getir
+                            return firebase.firestore().collection('universities').get();
+                        });
+                    }
+                    return querySnapshot;
+                })
+                .then((querySnapshot) => {
+                    // Üniversiteleri select'e ekle
+                    querySnapshot.forEach(doc => {
+                        const uni = doc.data();
+                        const option = document.createElement('option');
+                        option.value = uni.name;
+                        option.textContent = `${uni.name} (${uni.type})`;
+                        universitySelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Üniversiteler yüklenirken hata:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'Üniversiteler yüklenirken bir hata oluştu.'
+                    });
+                });
+        }
+
+        // Şifre göster/gizle
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        }
+
+        // Kayıt formu gönderimi
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitButton = this.querySelector('button[type="submit"]');
+
+            // Şifre kontrolü
+            if (password !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata!',
+                    text: 'Şifreler eşleşmiyor!'
+                });
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Kayıt Yapılıyor...';
+
+            // Firebase Authentication ile kullanıcı kaydı
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('Kullanıcı oluşturuldu:', user.uid);
+
+                    // Firestore'a kullanıcı bilgilerini ekle
+                    const userData = {
+                        username: username,
+                        email: email,
+                        role: 'student',
+                        university: document.getElementById('university').value,
+                        department: document.getElementById('department').value,
+                        studentNumber: document.getElementById('studentNumber').value,
+                        grade: document.getElementById('grade').value,
+                        gpa: parseFloat(document.getElementById('gpa').value),
+                        phone: document.getElementById('phone').value,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'active',
+                        experienceCount: 0
+                    };
+
+                    console.log('Kullanıcı verisi:', userData);
+
+                    // Firestore'a kaydet
+                    return firebase.firestore().collection('users').doc(user.uid).set(userData)
+                        .then(() => {
+                            console.log('Kullanıcı verisi Firestore\'a kaydedildi');
+                            return user;
+                    });
+                })
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Başarılı!',
+                        text: 'Hesabınız başarıyla oluşturuldu.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'erasmusdeneyim.html';
+                    });
+                })
+                .catch((error) => {
+                    console.error('Kayıt hatası:', error);
+                    let errorMessage = 'Kayıt yapılırken bir hata oluştu.';
+                    
+                    // Hata mesajlarını Türkçeleştir
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'Bu e-posta adresi zaten kullanımda.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Geçersiz e-posta adresi.';
+                            break;
+                        case 'auth/operation-not-allowed':
+                            errorMessage = 'E-posta/şifre girişi etkin değil.';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'Şifre çok zayıf.';
+                            break;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: errorMessage
+                    });
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-user-plus me-2"></i>Kayıt Ol';
+                });
+        });
+    </script>
 </body>
 </html> 

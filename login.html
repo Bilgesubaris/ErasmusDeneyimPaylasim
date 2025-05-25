@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Girişi - Erasmus Deneyim</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/login.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2 class="text-center mb-4">Admin Girişi</h2>
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                Hatalı email veya şifre!
+            </div>
+            <form id="adminLoginForm">
+                <div class="mb-3">
+                    <label for="adminEmail" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input type="email" class="form-control" id="adminEmail" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="adminPassword" class="form-label">Şifre</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="adminPassword" required>
+                    </div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">Beni Hatırla</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                <div class="text-center mt-3">
+                    <a href="#" class="btn btn-white">Şifreni mi unuttun?</a>
+                    <p class="mt-3">Hesabın yok mu? <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Kayıt Ol</a></p>
+                    <a href="ogrencigiris.html" class="text-decoration-none">Öğrenci girişi için tıklayın</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kayıt Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">Admin Kaydı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminRegisterForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label">Ad Soyad</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="registerName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">E-posta</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="registerEmail" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Şifre</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="registerPassword" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPasswordConfirm" class="form-label">Şifre Tekrar</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="registerPasswordConfirm" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Kayıt Ol</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/admin.js"></script>
+
+    <!-- Hata Ayıklama -->
+    <script>
+        // Firebase bağlantı durumunu kontrol et
+        window.addEventListener('load', function() {
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase SDK yüklenemedi!');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata!',
+                    text: 'Firebase bağlantısı kurulamadı. Lütfen sayfayı yenileyin.'
+                });
+            } else {
+                console.log('Firebase SDK başarıyla yüklendi');
+            }
+        });
+
+        // Form submit olaylarını kontrol et
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('adminLoginForm');
+            const registerForm = document.getElementById('adminRegisterForm');
+
+            if (!loginForm) {
+                console.error('Login formu bulunamadı!');
+            }
+            if (!registerForm) {
+                console.error('Register formu bulunamadı!');
+            }
+        });
+    </script>
+</body>
+</html> 

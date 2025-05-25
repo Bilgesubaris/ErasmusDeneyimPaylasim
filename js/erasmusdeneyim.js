@@ -1,703 +1,385 @@
-// Sayfa yüklendiğinde çalışacak fonksiyonlar
-document.addEventListener('DOMContentLoaded', function() {
-    // Kullanıcı bilgilerini kontrol et ve yükle
-    const kullanici = JSON.parse(localStorage.getItem('kullanici')) || {};
-    
-    // Navbar profil bilgilerini güncelle
-    if (kullanici.profilResmi) {
-        document.querySelector('.profile-image').src = kullanici.profilResmi;
+import { auth, db, storage } from './firebase-config.js';
+
+// Kullanıcı oturum durumunu kontrol et
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // Kullanıcı giriş yapmış
+        updateUIForLoggedInUser(user);
+    } else {
+        // Kullanıcı giriş yapmamış
+        updateUIForLoggedOutUser();
     }
-    document.querySelector('.profile-name').textContent = kullanici.ad || 'Kullanıcı Adı';
+});
 
-    // Form submit olayını dinle
-    const experienceForm = document.getElementById('experienceForm');
-    if (experienceForm) {
-        experienceForm.addEventListener('submit', handleExperienceSubmit);
-    }
-
-    // Fotoğraf yükleme önizlemesi
-    const photosInput = document.getElementById('photos');
-    if (photosInput) {
-        photosInput.addEventListener('change', handlePhotoPreview);
-    }
-
-    // Ülke seçeneklerini yükle
-    populateCountries();
-
-    // Deneyimleri yükle
-    loadExperiences();
-
-    // Enter tuşu ile yorum gönderme
-    const commentText = document.getElementById('commentText');
-    if (commentText) {
-        commentText.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                addComment();
-            }
-        });
-    }
-
-    // Yorum gönderme butonu
-    const addCommentBtn = document.getElementById('addCommentBtn');
-    if (addCommentBtn) {
-        addCommentBtn.addEventListener('click', addComment);
-    }
-
-    // Modal kapanınca currentExperienceId'yi sıfırla
-    const experienceModal = document.getElementById('experienceModal');
-    if (experienceModal) {
-        experienceModal.addEventListener('hidden.bs.modal', function() {
-            currentExperienceId = null;
+// Sayfa yüklendiğinde
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Deneyimleri yükle
+        await loadExperiences();
+    } catch (error) {
+        console.error('Sayfa yüklenirken hata:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+            text: 'Sayfa yüklenirken bir hata oluştu: ' + error.message
         });
     }
 });
 
-// Fotoğraf önizleme fonksiyonu
-function handlePhotoPreview(event) {
-    const files = event.target.files;
-    if (!files.length) return;
+// Giriş yapmış kullanıcı için UI güncelleme
+function updateUIForLoggedInUser(user) {
+    const profileButton = document.querySelector('.profile-button');
+    const profileName = document.querySelector('.profile-name');
+    const profileImage = document.querySelector('.profile-image');
 
-    // Önizleme div'ini oluştur veya temizle
-    let previewDiv = document.getElementById('photoPreview');
-    if (!previewDiv) {
-        previewDiv = document.createElement('div');
-        previewDiv.id = 'photoPreview';
-        previewDiv.className = 'photo-preview mt-2 d-flex gap-2 flex-wrap';
-        event.target.parentNode.appendChild(previewDiv);
-    } else {
-        previewDiv.innerHTML = '';
+    if (profileButton && profileName && profileImage) {
+        profileName.textContent = user.displayName || 'Kullanıcı';
+        profileImage.src = user.photoURL || 'https://via.placeholder.com/40';
     }
-
-    // Her fotoğraf için önizleme oluştur
-    Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.createElement('div');
-            preview.className = 'preview-item position-relative';
-            preview.innerHTML = `
-                <img src="${e.target.result}" class="img-thumbnail" style="height: 100px; object-fit: cover;">
-            `;
-            previewDiv.appendChild(preview);
-        };
-        reader.readAsDataURL(file);
-    });
 }
 
-// Deneyim form gönderimi
-async function handleExperienceSubmit(event) {
-    event.preventDefault();
-    
-    // Form verilerini al
-    const formData = new FormData(event.target);
-    const experience = {
-        id: Date.now().toString(),
-        university: formData.get('university'),
-        country: formData.get('country'),
-        city: formData.get('city'),
-        semester: formData.get('semester'),
-        title: formData.get('title'),
-        experience: formData.get('experience'),
-        rating: formData.get('rating'),
-        accommodation: formData.get('accommodation'),
-        monthlyExpense: formData.get('monthlyExpense'),
-        recommendations: formData.get('recommendations'),
-        photos: [],
-        date: new Date().toISOString(),
-        userId: JSON.parse(localStorage.getItem('kullanici'))?.email,
-        userName: JSON.parse(localStorage.getItem('kullanici'))?.ad,
-        status: 'pending' // Burada status değerini 'pending' olarak ayarlıyoruz
-    };
+// Giriş yapmamış kullanıcı için UI güncelleme
+function updateUIForLoggedOutUser() {
+    const profileButton = document.querySelector('.profile-button');
+    const profileName = document.querySelector('.profile-name');
+    const profileImage = document.querySelector('.profile-image');
 
-    // Zorunlu alanları kontrol et
-    const requiredFields = {
-        university: 'Üniversite',
-        country: 'Ülke',
-        city: 'Şehir',
-        semester: 'Dönem',
-        title: 'Başlık',
-        experience: 'Deneyim',
-        rating: 'Değerlendirme',
-        accommodation: 'Konaklama',
-        monthlyExpense: 'Aylık Harcama'
-    };
-
-    for (const [field, label] of Object.entries(requiredFields)) {
-        if (!experience[field]) {
-            showNotification(`${label} alanı zorunludur`, 'warning');
-            return;
-        }
+    if (profileButton && profileName && profileImage) {
+        profileName.textContent = 'Giriş Yap';
+        profileImage.src = 'https://via.placeholder.com/40';
     }
-
-    // Fotoğrafları işle
-    const photoFiles = formData.getAll('photos');
-    if (photoFiles.length > 0) {
-        try {
-            for (const file of photoFiles) {
-                if (file.size > 0) {
-                    const base64 = await convertFileToBase64(file);
-                    experience.photos.push(base64);
-                }
-            }
-        } catch (error) {
-            console.error('Fotoğraf yükleme hatası:', error);
-            showNotification('Fotoğraf yüklenirken bir hata oluştu', 'error');
-            return;
-        }
-    }
-
-    // Mevcut deneyimleri al ve yeni deneyimi ekle
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    experiences.unshift(experience); // Yeni deneyimi listenin başına ekle
-    localStorage.setItem('experiences', JSON.stringify(experiences));
-
-    // Formu sıfırla
-    event.target.reset();
-    
-    // Fotoğraf önizlemeyi temizle
-    const previewDiv = document.getElementById('photoPreview');
-    if (previewDiv) {
-        previewDiv.innerHTML = '';
-    }
-
-    // Modalı kapat
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addExperienceModal'));
-    modal.hide();
-
-    // Deneyimleri yeniden yükle
-    loadExperiences();
-
-    // Başarı mesajı göster
-    showNotification('Deneyiminiz başarıyla gönderildi ve onay bekliyor', 'success');
-}
-
-// Dosyayı Base64'e çevirme
-function convertFileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-// AB Ülkeleri listesi
-const euCountries = [
-    { code: 'AT', name: 'Avusturya' },
-    { code: 'BE', name: 'Belçika' },
-    { code: 'BG', name: 'Bulgaristan' },
-    { code: 'HR', name: 'Hırvatistan' },
-    { code: 'CY', name: 'Kıbrıs' },
-    { code: 'CZ', name: 'Çek Cumhuriyeti' },
-    { code: 'DK', name: 'Danimarka' },
-    { code: 'EE', name: 'Estonya' },
-    { code: 'FI', name: 'Finlandiya' },
-    { code: 'FR', name: 'Fransa' },
-    { code: 'DE', name: 'Almanya' },
-    { code: 'GR', name: 'Yunanistan' },
-    { code: 'HU', name: 'Macaristan' },
-    { code: 'IE', name: 'İrlanda' },
-    { code: 'IT', name: 'İtalya' },
-    { code: 'LV', name: 'Letonya' },
-    { code: 'LT', name: 'Litvanya' },
-    { code: 'LU', name: 'Lüksemburg' },
-    { code: 'MT', name: 'Malta' },
-    { code: 'NL', name: 'Hollanda' },
-    { code: 'PL', name: 'Polonya' },
-    { code: 'PT', name: 'Portekiz' },
-    { code: 'RO', name: 'Romanya' },
-    { code: 'SK', name: 'Slovakya' },
-    { code: 'SI', name: 'Slovenya' },
-    { code: 'ES', name: 'İspanya' },
-    { code: 'SE', name: 'İsveç' }
-];
-
-// Ülke seçeneklerini doldur
-function populateCountries() {
-    const countrySelect = document.getElementById('country');
-    if (!countrySelect) return;
-
-    // Varsayılan seçenek
-    countrySelect.innerHTML = '<option value="">Ülke Seçin</option>';
-
-    // AB ülkelerini alfabetik sıraya göre ekle
-    euCountries
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .forEach(country => {
-            const option = document.createElement('option');
-            option.value = country.code;
-            option.textContent = country.name;
-            countrySelect.appendChild(option);
-        });
-}
-
-// Deneyimleri yükleme fonksiyonu
-function loadExperiences() {
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const approvedExperiences = experiences.filter(exp => exp.status === 'approved');
-    const container = document.getElementById('experiencesContainer');
-    
-    if (!container) return;
-    
-    if (approvedExperiences.length === 0) {
-        container.innerHTML = `
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                Henüz onaylanmış deneyim bulunmuyor
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = approvedExperiences.map(exp => `
-        <div class="experience-card mb-4">
-            <div class="card-header">
-                <div class="user-info">
-                    <h5 class="mb-0">${exp.userName || 'Anonim'}</h5>
-                    <p class="text-muted mb-0">${exp.university}</p>
-                </div>
-                <div class="meta-info">
-                    <span class="country">
-                        <i class="fas fa-map-marker-alt me-1"></i>${exp.country}
-                    </span>
-                    <span class="semester ms-3">
-                        <i class="fas fa-calendar me-1"></i>${exp.semester}
-                    </span>
-                    <span class="rating ms-3">
-                        ${'⭐'.repeat(parseInt(exp.rating))}
-                    </span>
-                </div>
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">${exp.title}</h5>
-                <p class="experience-text">${exp.experience}</p>
-                ${exp.recommendations ? `
-                    <div class="recommendations">
-                        <h6><i class="fas fa-lightbulb me-2"></i>Tavsiyeler</h6>
-                        <p>${exp.recommendations}</p>
-                    </div>
-                ` : ''}
-                <div class="experience-details">
-                    <span class="detail-item">
-                        <i class="fas fa-euro-sign me-1"></i>
-                        Aylık: ${exp.monthlyExpense}€
-                    </span>
-                    <span class="detail-item ms-3">
-                        <i class="fas fa-home me-1"></i>
-                        ${exp.accommodation}
-                    </span>
-                </div>
-                ${exp.photos && exp.photos.length > 0 ? `
-                    <div class="experience-photos mt-3">
-                        <div class="row g-2">
-                            ${exp.photos.map(photo => `
-                                <div class="col-md-4">
-                                    <img src="${photo}" class="img-fluid rounded" alt="Deneyim fotoğrafı">
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
-    `).join('');
-}
-
-// Yorum ekleme fonksiyonu
-function addComment(event, experienceId) {
-    event.preventDefault();
-    
-    const kullanici = JSON.parse(localStorage.getItem('kullanici'));
-    if (!kullanici) {
-        showAlert('warning', 'Yorum yapabilmek için giriş yapmalısınız!');
-        return false;
-    }
-    
-    const commentText = event.target.comment.value.trim();
-    if (!commentText) {
-        showAlert('warning', 'Yorum boş olamaz!');
-        return false;
-    }
-    
-    const comment = {
-        id: Date.now().toString(),
-        content: commentText,
-        userId: kullanici.email,
-        userName: kullanici.ad,
-        date: new Date().toISOString(),
-        status: 'pending'
-    };
-    
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const expIndex = experiences.findIndex(exp => exp.id === experienceId);
-    
-    if (expIndex !== -1) {
-        if (!experiences[expIndex].comments) {
-            experiences[expIndex].comments = [];
-        }
-        experiences[expIndex].comments.push(comment);
-        localStorage.setItem('experiences', JSON.stringify(experiences));
-        
-        event.target.reset();
-        showAlert('success', 'Yorumunuz gönderildi ve onay bekliyor!');
-        loadExperiences(); // Sayfayı yenile
-    }
-    
-    return false;
-}
-
-// Alert gösterme fonksiyonu
-function showAlert(type, message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-    alertDiv.style.zIndex = '1050';
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 3000);
 }
 
 // Çıkış yapma fonksiyonu
-function cikisYap() {
-    localStorage.removeItem('kullanici');
-    window.location.href = 'svg-turkiye-haritasi.html';
-}
+window.logout = async () => {
+    try {
+        await auth.signOut();
+        window.location.href = 'svg-turkiye-haritasi.html';
+    } catch (error) {
+        console.error('Çıkış yapılırken hata oluştu:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+            text: 'Çıkış yapılırken bir hata oluştu.'
+        });
+    }
+};
 
-// Deneyim görüntüleme ve yorum işlemleri
-let currentExperienceId = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-    setupEventListeners();
+// Deneyim paylaşma butonuna tıklama olayı
+document.querySelector('.btn-primary').addEventListener('click', () => {
+    const addExperienceModal = new bootstrap.Modal(document.getElementById('addExperienceModal'));
+    addExperienceModal.show();
 });
 
-function setupEventListeners() {
-    document.getElementById('commentForm')?.addEventListener('submit', handleCommentSubmit);
-    document.getElementById('saveExperience')?.addEventListener('click', handleSaveExperience);
-}
-
-function viewExperience(experienceId) {
-    currentExperienceId = experienceId;
-    
-    // Deneyim detaylarını ve yorumları yükle
-    Promise.all([
-        fetch(`/api/experiences/${experienceId}`),
-        fetch(`/api/experiences/${experienceId}/comments`)
-    ])
-    .then(([experienceRes, commentsRes]) => Promise.all([experienceRes.json(), commentsRes.json()]))
-    .then(([experience, comments]) => {
-        displayExperienceDetails(experience);
-        displayComments(comments);
+// Deneyimleri yükle
+async function loadExperiences() {
+    try {
+        console.log('Deneyimler yükleniyor...');
         
-        // Modal'ı göster
-        const modal = new bootstrap.Modal(document.getElementById('viewExperienceModal'));
-        modal.show();
-    })
-    .catch(error => {
-        console.error('Error loading experience:', error);
-        alert('Deneyim yüklenirken bir hata oluştu.');
-    });
-}
+        const experiencesContainer = document.getElementById('experiencesContainer');
+        if (!experiencesContainer) {
+            console.error('Deneyimler container bulunamadı');
+            return;
+        }
 
-function displayExperienceDetails(experience) {
-    const detailsContainer = document.querySelector('#viewExperienceModal .experience-details');
-    detailsContainer.innerHTML = `
-        <div class="user-info mb-4">
-            <div class="d-flex align-items-center">
-                <img src="${experience.userImage || 'https://via.placeholder.com/64'}" 
-                    alt="Profil" class="rounded-circle me-3" width="64" height="64">
-                <div>
-                    <h6 class="fw-bold mb-1">${experience.userName}</h6>
-                    <div class="text-muted">
-                        ${experience.university}, ${experience.city} - ${experience.country}
-                    </div>
-                    <div class="text-muted small">
-                        ${experience.semester}
-                    </div>
+        experiencesContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+
+        // Firebase bağlantısını kontrol et
+        if (!db) {
+            throw new Error('Firebase bağlantısı bulunamadı');
+        }
+
+        console.log('Firebase bağlantısı başarılı, deneyimler getiriliyor...');
+
+        // Sadece onaylanmış deneyimleri getir
+        const snapshot = await db.collection('experiences')
+            .where('status', '==', 'approved')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        console.log('Deneyimler:', snapshot.docs.length);
+
+        if (snapshot.empty) {
+            console.log('Deneyim bulunamadı');
+            experiencesContainer.innerHTML = `
+                <div class="col-12 text-center">
+                    <p class="text-muted">Henüz onaylanmış deneyim bulunmuyor</p>
                 </div>
-            </div>
-        </div>
-        <div class="experience-content">
-            <h5 class="mb-3">${experience.title}</h5>
-            <p class="text-justify mb-4">${experience.content}</p>
+            `;
+            return;
+        }
+
+        experiencesContainer.innerHTML = ''; // Container'ı temizle
+
+        // Deneyimleri göster
+        snapshot.forEach(doc => {
+            const experience = doc.data();
+            console.log('Deneyim verisi:', experience);
             
-            <div class="details-grid">
-                <div class="detail-item">
-                    <i class="fas fa-star text-warning"></i>
-                    <span>Değerlendirme: ${experience.rating}/5</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-home"></i>
-                    <span>Konaklama: ${experience.accommodation}</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-euro-sign"></i>
-                    <span>Aylık Harcama: ${experience.monthlyExpense}€</span>
-                </div>
-            </div>
-
-            ${experience.recommendations ? `
-                <div class="recommendations mt-4">
-                    <h6 class="fw-bold mb-2">Tavsiyeler</h6>
-                    <p class="text-justify">${experience.recommendations}</p>
-                </div>
-            ` : ''}
-
-            ${experience.photos?.length ? `
-                <div class="photos-grid mt-4">
-                    ${experience.photos.map(photo => `
-                        <img src="${photo}" alt="Deneyim" class="experience-photo">
-                    `).join('')}
-                </div>
-            ` : ''}
-        </div>
-    `;
-
-    // Kaydetme butonunun durumunu güncelle
-    const saveButton = document.getElementById('saveExperience');
-    saveButton.classList.toggle('saved', experience.isSaved);
-    saveButton.innerHTML = experience.isSaved ? 
-        '<i class="fas fa-bookmark me-1"></i>Kaydedildi' :
-        '<i class="far fa-bookmark me-1"></i>Kaydet';
-}
-
-function displayComments(comments) {
-    const commentsList = document.getElementById('commentsList');
-    if (comments.length === 0) {
-        commentsList.innerHTML = '<p class="text-muted">Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>';
-        return;
-    }
-
-    commentsList.innerHTML = comments.map(comment => `
-        <div class="comment-item">
-            <div class="comment-header">
-                <div class="d-flex align-items-center">
-                    <img src="${comment.userImage || 'https://via.placeholder.com/32'}" 
-                        alt="Profil" class="rounded-circle me-2" width="32" height="32">
-                    <div>
-                        <span class="comment-author">${comment.userName}</span>
-                        <div class="comment-date text-muted small">
-                            ${formatDate(comment.date)}
+            const experienceCard = document.createElement('div');
+            experienceCard.className = 'col-md-6 col-lg-4 mb-4';
+            
+            experienceCard.innerHTML = `
+                <div class="card h-100 experience-card" onclick="viewExperience('${doc.id}')">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">${experience.university || 'Üniversite Belirtilmemiş'}</h5>
+                        </div>
+                        <div class="experience-info mb-3">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${experience.city || ''}, ${experience.country || 'Ülke Belirtilmemiş'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${experience.semester || 'Dönem Belirtilmemiş'}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>${experience.department || 'Bölüm Belirtilmemiş'}</span>
+                            </div>
+                        </div>
+                        <p class="card-text">${truncateText(experience.content || 'Açıklama yok', 150)}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="user-info">
+                                <span class="username">${experience.username || 'Anonim'}</span>
+                            </div>
+                            <div class="post-date">
+                                <i class="fas fa-clock"></i>
+                                ${formatDate(experience.createdAt)}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="comment-content mt-2">
-                ${comment.content}
-            </div>
-        </div>
-    `).join('');
-}
-
-async function handleCommentSubmit(event) {
-    event.preventDefault();
-    
-    const commentText = document.getElementById('commentText').value.trim();
-    if (!commentText) {
-        alert('Lütfen bir yorum yazın.');
-        return;
-    }
-
-    const submitButton = event.target.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Gönderiliyor...';
-
-    try {
-        const response = await fetch(`/api/experiences/${currentExperienceId}/comments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content: commentText })
+            `;
+            
+            experiencesContainer.appendChild(experienceCard);
         });
 
-        if (!response.ok) {
-            throw new Error('Yorum gönderilemedi');
-        }
-
-        // Yorumları yenile
-        const commentsResponse = await fetch(`/api/experiences/${currentExperienceId}/comments`);
-        const comments = await commentsResponse.json();
-        displayComments(comments);
-
-        // Formu temizle
-        document.getElementById('commentText').value = '';
-        
-        // Yorum sayacını güncelle
-        updateCommentCount(currentExperienceId);
+        console.log('Deneyimler başarıyla yüklendi');
     } catch (error) {
-        console.error('Error submitting comment:', error);
-        alert('Yorum gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
-    } finally {
-        submitButton.disabled = false;
-        submitButton.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Yorum Yap';
+        console.error('Deneyimler yüklenirken hata oluştu:', error);
+        experiencesContainer.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Deneyimler yüklenirken bir hata oluştu: ${error.message}
+                </div>
+            </div>
+        `;
     }
 }
 
-async function handleSaveExperience() {
-    const saveButton = document.getElementById('saveExperience');
-    const isSaved = saveButton.classList.contains('saved');
-
-    try {
-        const response = await fetch(`/api/experiences/${currentExperienceId}/save`, {
-            method: isSaved ? 'DELETE' : 'POST'
-        });
-
-        if (!response.ok) {
-            throw new Error('İşlem başarısız');
+// Yıldız derecelendirmesi oluştur
+function generateRatingStars(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let stars = '';
+    
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
+    }
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+    }
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
         }
 
-        // Kaydetme durumunu güncelle
-        saveButton.classList.toggle('saved');
-        saveButton.innerHTML = saveButton.classList.contains('saved') ?
-            '<i class="fas fa-bookmark me-1"></i>Kaydedildi' :
-            '<i class="far fa-bookmark me-1"></i>Kaydet';
-    } catch (error) {
-        console.error('Error saving experience:', error);
-        alert(isSaved ? 
-            'Deneyim kaydı kaldırılırken bir hata oluştu.' : 
-            'Deneyim kaydedilirken bir hata oluştu.');
-    }
+    return stars;
 }
 
-function updateCommentCount(experienceId) {
-    const experienceCard = document.querySelector(`[data-experience-id="${experienceId}"]`);
-    if (experienceCard) {
-        const commentCountElement = experienceCard.querySelector('.comment-count');
-        if (commentCountElement) {
-            const currentCount = parseInt(commentCountElement.textContent.match(/\d+/)[0]);
-            commentCountElement.innerHTML = `<i class="far fa-comment me-1"></i>${currentCount + 1}`;
-        }
-    }
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function addComment() {
-    if (!currentExperienceId) {
-        console.error('No experience selected');
-        return;
-    }
-    
-    const commentText = document.getElementById('commentText');
-    if (!commentText) return;
-    
-    const text = commentText.value.trim();
-    if (!text) {
-        showNotification('Yorum alanı boş olamaz', 'warning');
-        return;
-    }
-    
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const index = experiences.findIndex(exp => exp.id === currentExperienceId);
-    
-    if (index !== -1) {
-        if (!experiences[index].comments) {
-            experiences[index].comments = [];
-        }
-        
-        // Öğrenci bilgilerini al
-        const student = JSON.parse(localStorage.getItem('student') || sessionStorage.getItem('student'));
-        
-        const comment = {
-            id: Date.now().toString(),
-            text: text,
-            date: new Date().toISOString(),
-            userName: student ? student.name : 'Öğrenci'
-        };
-        
-        experiences[index].comments.push(comment);
-        localStorage.setItem('experiences', JSON.stringify(experiences));
-        
-        // Yorum alanını temizle
-        commentText.value = '';
-        
-        // Yorumları yeniden yükle
-        loadComments(currentExperienceId);
-        
-        showNotification('Yorum başarıyla eklendi', 'success');
-    }
-}
-
-function timeAgo(date) {
-    const seconds = Math.floor((new Date() - date) / 1000);
-    
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return interval + ' yıl önce';
-    
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) return interval + ' ay önce';
-    
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) return interval + ' gün önce';
-    
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) return interval + ' saat önce';
-    
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) return interval + ' dakika önce';
-    
-    if(seconds < 10) return 'şimdi';
-    
-    return Math.floor(seconds) + ' saniye önce';
-}
-
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} notification`;
-    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 1rem; border-radius: 0.5rem;';
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
+// Metni kısalt
 function truncateText(text, maxLength) {
-    if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + '...';
 }
 
-function loadComments(experienceId) {
-    const experiences = JSON.parse(localStorage.getItem('experiences')) || [];
-    const experience = experiences.find(exp => exp.id === experienceId);
-    const commentsList = document.getElementById('commentsList');
+// Tarihi formatla
+function formatDate(timestamp) {
+    if (!timestamp) return 'Tarih belirtilmemiş';
     
-    if (!commentsList) return;
+    const date = timestamp.toDate();
+    const now = new Date();
+    const diff = now - date;
     
-    if (!experience || !experience.comments || experience.comments.length === 0) {
-        commentsList.innerHTML = '<div class="text-muted text-center py-3">İlk yorumu sen yap</div>';
-        return;
+    // Son 24 saat içindeyse
+    if (diff < 24 * 60 * 60 * 1000) {
+        const hours = Math.floor(diff / (60 * 60 * 1000));
+        if (hours === 0) {
+            const minutes = Math.floor(diff / (60 * 1000));
+            return `${minutes} dakika önce`;
+        }
+        return `${hours} saat önce`;
+}
+
+    // Son 7 gün içindeyse
+    if (diff < 7 * 24 * 60 * 60 * 1000) {
+        const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+        return `${days} gün önce`;
     }
     
-    commentsList.innerHTML = experience.comments.map(comment => `
-        <div class="comment-item py-2">
-            <div class="d-flex">
-                <div class="comment-avatar me-2">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <span class="fw-bold me-2">${comment.userName || 'Öğrenci'}</span>
-                    <span>${comment.text}</span>
-                    <div class="text-muted small">${timeAgo(new Date(comment.date))}</div>
-                </div>
-            </div>
-        </div>
-    `).join('');
+    // Daha eskiyse
+    return date.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
+
+// Deneyim detaylarını görüntüle
+async function viewExperience(id) {
+    try {
+        const experienceDoc = await db.collection('experiences').doc(id).get();
+        
+        if (!experienceDoc.exists) {
+            throw new Error('Deneyim bulunamadı');
+        }
+
+        const experience = experienceDoc.data();
+        const modal = document.getElementById('viewExperienceModal');
+        const details = modal.querySelector('.experience-details');
+        
+        // Deneyim detaylarını doldur
+        details.dataset.experienceId = id;
+        details.querySelector('.username').textContent = experience.username || 'Anonim';
+        details.querySelector('.date').textContent = formatDate(experience.createdAt);
+        details.querySelector('.rating').innerHTML = generateRatingStars(experience.rating || 0);
+        details.querySelector('.experience-title').textContent = experience.title || 'Başlıksız Deneyim';
+        details.querySelector('.university').textContent = experience.university || 'Belirtilmemiş';
+        details.querySelector('.location').textContent = `${experience.city || ''}, ${experience.country || 'Belirtilmemiş'}`;
+        details.querySelector('.semester').textContent = experience.semester || 'Belirtilmemiş';
+        details.querySelector('.accommodation').textContent = experience.accommodation || 'Belirtilmemiş';
+        details.querySelector('.expense').textContent = `${experience.monthlyExpense || 0} €`;
+        details.querySelector('.experience-text').textContent = experience.content || 'Açıklama yok';
+        details.querySelector('.recommendations-text').textContent = experience.recommendations || 'Tavsiye yok';
+
+        // Modal'ı göster
+        const modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+    } catch (error) {
+        console.error('Deneyim detayları yüklenirken hata oluştu:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+            text: 'Deneyim detayları yüklenirken bir hata oluştu: ' + error.message
+        });
+    }
+}
+
+// Deneyim formunu dinle
+document.getElementById('experienceForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    try {
+    const user = auth.currentUser;
+    if (!user) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+                text: 'Deneyim paylaşmak için giriş yapmalısınız.'
+        });
+        return;
+    }
+
+        // Form verilerini topla
+        const formData = {
+            university: document.getElementById('university').value,
+            country: document.getElementById('country').value,
+            city: document.getElementById('city').value,
+            semester: document.getElementById('semester').value,
+            title: document.getElementById('title').value,
+            content: document.getElementById('experience').value,
+            rating: parseInt(document.getElementById('rating').value),
+            accommodation: document.getElementById('accommodation').value,
+            monthlyExpense: parseInt(document.getElementById('monthlyExpense').value),
+            recommendations: document.getElementById('recommendations').value,
+            userId: user.uid,
+            username: user.displayName || 'Anonim Kullanıcı',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'pending', // Onay bekliyor durumu
+            likes: [],
+            comments: []
+        };
+
+        // Fotoğrafları yükle
+        const photoFiles = document.getElementById('photos').files;
+        if (photoFiles.length > 0) {
+            const photoUrls = [];
+            for (let i = 0; i < photoFiles.length; i++) {
+                const file = photoFiles[i];
+                const storageRef = storage.ref();
+                const photoRef = storageRef.child(`experiences/${user.uid}/${Date.now()}_${file.name}`);
+                await photoRef.put(file);
+                const url = await photoRef.getDownloadURL();
+                photoUrls.push(url);
+            }
+            formData.photos = photoUrls;
+        }
+
+        // Deneyimi Firestore'a kaydet
+        await db.collection('experiences').add(formData);
+
+        // Başarılı mesajı göster
+        Swal.fire({
+            icon: 'success',
+            title: 'Başarılı!',
+            text: 'Deneyiminiz admin onayına gönderildi. Onaylandıktan sonra yayınlanacaktır.'
+        });
+
+        // Formu temizle ve modalı kapat
+        document.getElementById('experienceForm').reset();
+        document.getElementById('photoPreview').innerHTML = '';
+        bootstrap.Modal.getInstance(document.getElementById('addExperienceModal')).hide();
+
+    } catch (error) {
+        console.error('Deneyim paylaşılırken hata:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Hata!',
+            text: 'Deneyim paylaşılırken bir hata oluştu.'
+        });
+    }
+});
+
+// Fotoğraf önizleme
+function previewPhotos(input) {
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+
+    if (input.files) {
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'preview-image';
+                preview.appendChild(img);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+}
+
+// Scroll to experiences section
+function scrollToExperiences() {
+    const experiencesSection = document.querySelector('.experiences-grid');
+    if (experiencesSection) {
+        experiencesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Load countries
+    loadCountries();
+    
+    // Load experiences
+    loadExperiences();
+});

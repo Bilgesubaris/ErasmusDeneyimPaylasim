@@ -6,6 +6,7 @@
     <title>Erasmus Deneyimleri</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="erasmusdeneyim.css">
 </head>
 <body>
@@ -24,7 +25,7 @@
                 
                 <div class="dropdown">
                     <button class="profile-button" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://via.placeholder.com/32" alt="Profil" class="profile-image">
+                        <img src="https://via.placeholder.com/40" alt="Profil" class="profile-image">
                         <span class="profile-name ms-2">Kullanıcı Adı</span>
                         <i class="fas fa-chevron-down ms-2"></i>
                     </button>
@@ -46,7 +47,7 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="svg-turkiye-haritasi.html">
+                            <a class="dropdown-item" href="#" onclick="logout()">
                                 <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
                             </a>
                         </li>
@@ -59,25 +60,43 @@
     <div class="header-section">
         <div class="container">
             <div class="header-content">
-                <h1 class="text-center">
-                    <i class="fas fa-globe-europe me-2"></i>
-                    Erasmus Deneyimleri
-                </h1>
-                <p class="text-center">
-                    Öğrencilerin paylaştığı değerli Erasmus deneyimleri ile yolculuğunuzu planlayın
-                </p>
+                <div class="header-text">
+                    <h1>
+                        <i class="fas fa-globe-europe"></i>
+                        Erasmus Deneyimleri
+                    </h1>
+                    <p>
+                        Öğrencilerin paylaştığı değerli Erasmus deneyimleri ile yolculuğunuzu planlayın
+                    </p>
+                
+                </div>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Üniversite</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Üniversite</div>
+                        </div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">100+</div>
-                        <div class="stat-label">Deneyim</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">100+</div>
+                            <div class="stat-label">Deneyim</div>
+                        </div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">15+</div>
-                        <div class="stat-label">Ülke</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">Ülke</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,14 +107,14 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="filter-section">
-                    <h5>Filtreler</h5>
-                    <div class="mb-3">
+                    <h5 class="mb-4">Filtreler</h5>
+                    <div class="mb-4">
                         <label class="form-label">Ülke</label>
                         <select class="form-select" id="countryFilter">
                             <option value="">Tümü</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Dönem</label>
                         <select class="form-select" id="semesterFilter">
                             <option value="">Tümü</option>
@@ -111,7 +130,6 @@
                     <i class="fas fa-plus-circle me-2"></i>Yeni Deneyim Paylaş
                 </button>
 
-                <!-- Deneyimler Listesi -->
                 <div id="experiencesContainer">
                     <!-- Deneyimler buraya dinamik olarak eklenecek -->
                 </div>
@@ -124,30 +142,44 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Erasmus Deneyimini Paylaş</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Yeni Deneyim Paylaş
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="experienceForm">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="university" class="form-label">Üniversite*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-university"></i></span>
                                 <input type="text" class="form-control" id="university" name="university" required>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="country" class="form-label">Ülke*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
                                 <select class="form-select" id="country" name="country" required>
                                     <option value="">Seçiniz</option>
                                 </select>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="city" class="form-label">Şehir*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-city"></i></span>
                                 <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="semester" class="form-label">Dönem*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                 <select class="form-select" id="semester" name="semester" required>
                                     <option value="">Seçiniz</option>
                                     <option>2023-2024 Güz</option>
@@ -157,19 +189,28 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3">
+                        </div>
+                        <div class="mb-4">
                             <label for="title" class="form-label">Başlık*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-heading"></i></span>
                             <input type="text" class="form-control" id="title" name="title" required 
                                 placeholder="Deneyiminiz için kısa bir başlık...">
+                            </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="experience" class="form-label">Deneyiminiz*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-pen"></i></span>
                             <textarea class="form-control" id="experience" name="experience" rows="4" required 
                                 placeholder="Erasmus deneyiminizi detaylı bir şekilde anlatın..."></textarea>
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="rating" class="form-label">Genel Değerlendirme*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-star"></i></span>
                                 <select class="form-select" id="rating" name="rating" required>
                                     <option value="">Seçiniz</option>
                                     <option value="5">⭐⭐⭐⭐⭐ Mükemmel</option>
@@ -179,8 +220,11 @@
                                     <option value="1">⭐ Kötü</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            </div>
+                            <div class="col-md-6 mb-4">
                                 <label for="accommodation" class="form-label">Konaklama Tipi*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-home"></i></span>
                                 <select class="form-select" id="accommodation" name="accommodation" required>
                                     <option value="">Seçiniz</option>
                                     <option value="Yurt">Yurt</option>
@@ -188,27 +232,52 @@
                                     <option value="Tek">Tek Başına Ev</option>
                                     <option value="Aile">Aile Yanı</option>
                                 </select>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-4">
                                 <label for="monthlyExpense" class="form-label">Aylık Ortalama Harcama (€)*</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-euro-sign"></i></span>
                                 <input type="number" class="form-control" id="monthlyExpense" name="monthlyExpense" required
                                     placeholder="Örn: 800">
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="photos" class="form-label">Fotoğraflar</label>
-                                <input type="file" class="form-control" id="photos" name="photos" multiple
-                                    accept="image/*">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Fotoğraflar (En fazla 5 adet)</label>
+                                <div class="photo-upload-container">
+                                    <label for="photos" class="photo-upload-button">
+                                        <i class="fas fa-camera"></i>
+                                        <span>Fotoğraf Seç</span>
+                                    </label>
+                                    <input type="file" id="photos" name="photos" multiple accept="image/*" 
+                                        onchange="previewPhotos(this)">
+                                    <div id="photoPreview" class="mt-3"></div>
+                                    <div class="upload-progress">
+                                        <div class="upload-status">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Fotoğraflar yükleniyor...</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-bar-fill"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="recommendations" class="form-label">Tavsiyeler</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lightbulb"></i></span>
                             <textarea class="form-control" id="recommendations" name="recommendations" rows="3" 
                                 placeholder="Gelecek öğrencilere tavsiyeleriniz..."></textarea>
+                            </div>
                         </div>
                         <div class="modal-footer px-0 pb-0">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>İptal
+                            </button>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-share me-2"></i>Paylaş
                             </button>
@@ -224,41 +293,150 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Deneyim Detayları</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-globe-europe me-2"></i>
+                        Deneyim Detayları
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="experience-details">
-                        <!-- Deneyim detayları buraya gelecek -->
+                    <div class="experience-details" data-experience-id="">
+                        <div class="experience-header mb-4">
+                            <h4 class="experience-title mb-4"></h4>
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <div class="info-icon">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <span class="info-label">Üniversite</span>
+                                        <h6 class="info-value university"></h6>
+                                    </div>
+                        <div class="experience-header">
+                            <div class="user-info">
+                                <img src="" alt="" class="user-avatar">
+                                <div class="user-details">
+                                    <div class="username"></div>
+                                    <div class="post-date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span class="date"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rating"></div>
+                        </div>
+
+                        <div class="experience-content">
+                            <h4 class="experience-title mb-4"></h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-university"></i>
+                                    <span class="university"></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span class="location"></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span class="semester"></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-home"></i>
+                                    <span class="accommodation"></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-euro-sign"></i>
+                                    <span class="expense"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="experience-text"></div>
+
+                        <div class="recommendations">
+                            <h6><i class="fas fa-lightbulb"></i>Tavsiyeler</h6>
+                            <p class="recommendations-text"></p>
+                        </div>
+
+                        <div class="experience-actions">
+                            <div class="action-buttons">
+                                <div class="left-actions">
+                                    <button class="action-button like-button" onclick="likeExperience()">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <button class="action-button comment-button" onclick="focusCommentInput()">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+                                    <button class="action-button share-button" onclick="shareExperience()">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                                <button class="action-button save-button" onclick="saveExperience()">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                            </div>
+                            <div class="action-stats">
+                                <div class="likes-count">
+                                    <i class="fas fa-heart"></i>
+                                    <span>0 beğeni</span>
+                                </div>
+                                <div class="comments-count">
+                                    <i class="fas fa-comment"></i>
+                                    <span>0 yorum</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="comments-section mt-4">
-                        <h6 class="fw-bold mb-3">Yorumlar</h6>
-                        <div id="commentsList" class="mb-3">
+                    <div class="comments-section">
+                        <h6><i class="fas fa-comments"></i>Yorumlar</h6>
+                        <div id="commentsList" class="mb-4">
                             <!-- Yorumlar buraya yüklenecek -->
                         </div>
-                        <form id="commentForm" class="mt-3">
+                        <form id="commentForm">
                             <div class="form-group">
                                 <textarea class="form-control" id="commentText" name="comment" rows="3" 
                                     placeholder="Yorumunuzu yazın..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-2">
-                                <i class="fas fa-paper-plane me-1"></i>Yorum Yap
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="comment-actions">
+                                    <button type="button" class="btn btn-link text-muted" onclick="addEmoji()">
+                                        <i class="far fa-smile"></i>
+                                    </button>
+                                    <label for="commentImage" class="btn btn-link text-muted mb-0">
+                                        <i class="far fa-image"></i>
+                                        <input type="file" id="commentImage" accept="image/*" style="display: none;" 
+                                            onchange="previewCommentImage(this)">
+                                    </label>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div id="imagePreview" class="d-none">
+                                        <img src="" alt="Yorum görseli" class="comment-image-preview">
+                                        <button type="button" class="btn btn-sm btn-danger ms-2" onclick="removeCommentImage()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Yorum Yap
                             </button>
+                                </div>
+                            </div>
                         </form>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" id="saveExperience">
-                        <i class="fas fa-bookmark me-1"></i>Kaydet
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/erasmusdeneyim.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/experience.js"></script>
+    <script type="module" src="js/erasmusdeneyim.js"></script>
 </body>
 </html>
